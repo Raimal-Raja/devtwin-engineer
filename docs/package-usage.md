@@ -11,3 +11,11 @@ python scripts/validate_package.py .
 Ask an authorized agent to read SKILL.md explicitly and use its relevant references on your target repository. This instruction does not install or confirm automatic discovery in Codex or Claude Code. Clean-session runtime integrations remain unverified. Optional Git inspection requires a Git executable; all helpers use the Python standard library.
 
 `manifest.json` records the included file sizes and SHA-256 digests. It provides integrity evidence for these files, not an author signature. Preserve directory structure so relative links resolve. The development evaluation fixtures and results are deliberately not included.
+
+To verify an archive using a trusted copy of the helper:
+
+```sh
+python scripts/verify_archive.py /path/to/archive.zip
+```
+
+Verification checks portable paths, entry/size limits, manifest hashes and extracted package links in a temporary directory. It does not execute archived Python files. A passing manifest confirms internal consistency; it cannot establish the author or defend against an attacker replacing both files and manifest. Use a trusted distribution channel.

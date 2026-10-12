@@ -10,5 +10,6 @@
   "scripts/collect_context.py",
   "scripts/inspect_changes.py",
   "scripts/validate_package.py",
+  "scripts/verify_archive.py",
   "docs/package-usage.md"
 ]

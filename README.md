@@ -13,4 +13,6 @@ python -m unittest discover -s tests -v
 python scripts/validate_package.py .
 ```
 
+Run all local development gates with `python scripts/check_project.py .`; the JSON report preserves failures and skips and checks a temporary archive after extraction.
+
 Python 3.10+ is required; local checks use no third-party dependencies. The deliberately broken checkout fixture is copied to temporary directories for checks. Agent execution may incur runtime costs. Clean-session integrations, benchmarks, licensing, and public hosting remain pending.

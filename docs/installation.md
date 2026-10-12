@@ -7,6 +7,14 @@ python -m unittest discover -s tests -v
 python scripts/validate_package.py .
 ```
 
+For a complete local development check:
+
+```sh
+python scripts/check_project.py .
+```
+
+This trusted-source command validates the package, runs tests in a subprocess, builds a temporary archive and verifies its integrity and extracted links. Its JSON report includes failures and skip reasons. Empty or entirely skipped test suites fail. The command makes no network requests or Git writes and does not publish a release; runtime activation and licensing remain separate gates.
+
 For a manual development session, ask your agent to read this repository's SKILL.md and use its linked references on an authorized copy of the checkout fixture. Do not repair the canonical intentionally broken fixture.
 
 Frontmatter and progressive references follow the [official skill documentation](https://learn.chatgpt.com/docs/build-skills), checked on 2026-10-12. Automatic discovery, clean-session installation, and Claude Code integration remain unverified. No global agent configuration is changed by these commands.

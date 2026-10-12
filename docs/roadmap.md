@@ -5,6 +5,7 @@
 - Helper development: read-only Git status summary implemented with staged/unstaged, rename, untracked and preservation checks, including suppression of repository content filters.
 - Helper development: package validation expanded to documentation links, bounded UTF-8 reads, explicit scalar metadata and unsafe-path rejection. It remains a documented subset of YAML and Markdown validation.
 - Packaging: explicit-allowlist private ZIP builder validates selected resources in isolation, records file hashes, and passes clean-extraction checks. Runtime discovery and public release remain unverified.
+- Local verification: one command checks source metadata/links, executed tests and skips, archive integrity and clean extraction without hosted CI or publication.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
 - Then: remaining nine capabilities with realistic tasks and rubrics.
