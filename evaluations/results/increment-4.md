@@ -9,3 +9,5 @@ Executed with bundled Python 3.12.14 on Windows:
 - `python scripts/collect_context.py evaluations/fixtures/checkout --max-entries 10`: two source/test paths and sizes, no errors, no truncation.
 
 Coverage: excluded directories and secret filenames, oversized files, entry/scan/depth bounds, missing roots, invalid limits, and simulated permission failures. The inventory reads metadata only and makes no repository mutations. Code skips symlinks and Windows reparse points, but real symlink/junction behavior remains unverified in this restricted environment. Concurrent path replacement is not isolated. Output can expose filenames and requires review before sharing.
+
+Independent evaluation retry: a fresh-context evaluator was dispatched against `.workspaces/core-agent-002` without receiving a correction. It remained running and returned no progress or final result before interruption. No cause was established; this retry is inconclusive and does not close the runtime evaluation gate.
