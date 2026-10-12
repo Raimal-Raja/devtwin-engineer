@@ -26,4 +26,8 @@ Exit code 0 means inspection succeeded; 2 means an inaccessible/non-Git root, mi
 
 ## Package validation and checkout evaluation
 
-Use `validate_package.py` for package structure and local skill links. Use `evaluate_checkout.py` only against trusted synthetic exercises, as described in the [evaluation guide](evaluation.md). Neither helper establishes automatic runtime discovery or general benchmark performance.
+Use `validate_package.py` for package structure, metadata and inline local links in SKILL.md, README.md, references, templates, docs, integrations and evaluation documents. It rejects linked paths outside the package, symlink/reparse documents, unsupported URI schemes, unreadable UTF-8 and documents larger than 1 MiB. It checks at most 1,000 documents and treats exceeding that limit as incomplete validation. Optional document directories may be absent. Private evaluation results and bytecode directories are excluded.
+
+The supported frontmatter is deliberately a subset: flat scalar string fields, with required `name` and `description`; plain strings, JSON-style double-quoted strings and YAML-style single-quoted strings are accepted. Duplicate fields, blank descriptions, block/nested structures and non-string scalars are rejected. This is not a general YAML parser or full runtime conformance validator. Inline links are checked, including angle-bracket destinations with spaces and encoded paths; fenced examples are ignored. Reference-style links, HTML links, heading anchors and remote availability are not validated. Exit status is 0 for valid or 1 for errors, with JSON diagnostics.
+
+Use `evaluate_checkout.py` only against trusted synthetic exercises, as described in the [evaluation guide](evaluation.md). Neither helper establishes automatic runtime discovery or general benchmark performance.
