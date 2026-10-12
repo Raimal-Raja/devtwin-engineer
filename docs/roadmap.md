@@ -2,6 +2,7 @@
 
 - Implemented: local foundation, four core references, templates, five development requests, broken checkout fixture, automated fixture checks and package validation; repeatable exercise preparation, evaluator-side contract checks and core rubric.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
+- Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
 - Then: remaining nine capabilities with realistic tasks and rubrics.
 - Then: bounded context inventory and read-only Git inspection helpers with adversarial filesystem tests.
 - Then: tested Codex and Claude Code adapters.
