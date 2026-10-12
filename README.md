@@ -4,7 +4,7 @@ A local skill for evidence-based Python investigation and focused repairs.
 
 Increment 1 contains four core workflows: repository understanding, reproduction, implementation, and regression verification. The other nine capabilities remain planned.
 
-Start with [SKILL.md](SKILL.md) and [local development](docs/installation.md).
+Start with [SKILL.md](SKILL.md), [local development](docs/installation.md), the [evaluation procedure](docs/evaluation.md), and the [incremental roadmap](docs/roadmap.md).
 
 ```sh
 python -m unittest discover -s tests -v
