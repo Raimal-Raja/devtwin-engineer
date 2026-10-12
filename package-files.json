@@ -1,0 +1,14 @@
+[
+  "SKILL.md",
+  "references/routing.md",
+  "references/repository-understanding.md",
+  "references/bug-reproduction.md",
+  "references/implementation.md",
+  "references/regression-testing.md",
+  "templates/evidence-ledger.md",
+  "templates/verification-report.md",
+  "scripts/collect_context.py",
+  "scripts/inspect_changes.py",
+  "scripts/validate_package.py",
+  "docs/package-usage.md"
+]
