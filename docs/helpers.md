@@ -12,6 +12,18 @@ Limits bound emitted entries, scanned directory entries, descent depth, and incl
 
 Exit code 0 means inventory completed (possibly truncated), 1 means traversal errors were recorded, and 2 means invalid root or arguments. Permission failures report error types rather than raw sensitive error messages.
 
+## Git change summary
+
+```sh
+python scripts/inspect_changes.py . --max-entries 1000
+```
+
+Returns JSON paths and Git status codes for staged, unstaged, renamed and untracked entries. It reads no diffs or file contents into the report. Optional index locks, filesystem-monitor commands, untracked-cache updates and configured content-filter commands are disabled. Inherited `GIT_*` environment variables are removed to keep inspection on the requested checkout. The helper does not run hooks, install dependencies or mutate target files.
+
+Inspection covers the whole working tree even when called from a subdirectory. Untracked directories are grouped and submodule contents are excluded. `index` and `working_tree` contain porcelain v1 status characters; `??` marks untracked paths. Renames include `original_path`. The output entry limit sets `truncated` while `total_changes` counts all reported Git entries. Git's captured output itself is not size-bounded; commands have a 30-second timeout. Paths may be sensitive, so review output before sharing.
+
+Exit code 0 means inspection succeeded; 2 means an inaccessible/non-Git root, missing Git executable, invalid arguments or command failure. Errors deliberately omit repository-controlled stderr. Disabling content filters can cause files that require those filters to appear modified; treat this as conservative status evidence and review with appropriate trusted tooling. Only stable, trusted local checkouts are supported; this is not isolation against concurrent repository/configuration replacement.
+
 ## Package validation and checkout evaluation
 
 Use `validate_package.py` for package structure and local skill links. Use `evaluate_checkout.py` only against trusted synthetic exercises, as described in the [evaluation guide](evaluation.md). Neither helper establishes automatic runtime discovery or general benchmark performance.
