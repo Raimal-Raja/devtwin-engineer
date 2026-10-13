@@ -10,6 +10,7 @@
 - Capability development: API compatibility and dependency diagnosis are drafts with permissive/strict JSON consumers and an offline synthetic resolver exercise; agent-level and real-project behavior remain unverified.
 - Capability development: database/security reviews are drafts with existing-data SQLite migration checks and synthetic ownership/access cases. Production engine, concurrency and authentication integration remain unverified.
 - Capability development: all thirteen references are present; final three drafts cover performance, documentation verification and delivery. Local measurements and examples are development evidence, not a passed agent-evaluation/release gate.
+- Runtime adapters: official project layouts are documented and an explicit-project installer is checked in temporary projects. Discovery and activation remain unverified; no global agent configuration is changed.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
 - Then: evaluate all workflows against their tasks and rubrics, extend filesystem/platform coverage, and establish independent held-out tasks.

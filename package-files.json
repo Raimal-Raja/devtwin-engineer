@@ -21,5 +21,10 @@
   "scripts/inspect_changes.py",
   "scripts/validate_package.py",
   "scripts/verify_archive.py",
+  "scripts/build_package.py",
+  "scripts/install_skill.py",
+  "package-files.json",
+  "integrations/codex/README.md",
+  "integrations/claude-code/README.md",
   "docs/package-usage.md"
 ]

@@ -19,3 +19,5 @@ python scripts/verify_archive.py /path/to/archive.zip
 ```
 
 Verification checks portable paths, entry/size limits, manifest hashes and extracted package links in a temporary directory. It does not execute archived Python files. A passing manifest confirms internal consistency; it cannot establish the author or defend against an attacker replacing both files and manifest. Use a trusted distribution channel.
+
+For private project installation, use the [Codex adapter](../integrations/codex/README.md) or [Claude Code adapter](../integrations/claude-code/README.md). The bundled installer requires an explicit source and existing project, validates the selected package before copying and refuses existing skill destinations. Installation does not verify activation or run model inference.

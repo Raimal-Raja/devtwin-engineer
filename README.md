@@ -8,6 +8,8 @@ Start with [SKILL.md](SKILL.md), [local development](docs/installation.md), the 
 
 See the [support matrix](docs/supported-environments.md) for exercised environments and pending runtime checks. Completed increments are pushed to the private GitHub repository after verification.
 
+Private project adapters are documented for [Codex](integrations/codex/README.md) and [Claude Code](integrations/claude-code/README.md). File installation is tested; runtime activation remains unverified.
+
 ```sh
 python -m unittest discover -s tests -v
 python scripts/validate_package.py .
