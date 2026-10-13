@@ -12,6 +12,7 @@ import time
 from .investigate import WORKFLOWS, investigate
 from .nvidia import ProviderError
 from .providers import provider_info
+from .patches import export_candidate, propose
 from .workspace import WorkspaceError, ingest_zip
 
 UI = Path(__file__).parent / 'ui'
@@ -19,10 +20,11 @@ MAX_BODY = 3 * 1024 * 1024
 
 
 class WorkspaceServer(HTTPServer):
-    def __init__(self, port, token, *, analyze=investigate):
+    def __init__(self, port, token, *, analyze=investigate, propose_patch=propose):
         if not isinstance(token, str) or len(token) < 32 or not token.isascii() or not token.isalnum():
             raise ValueError('DEVTWIN_SESSION_TOKEN must contain at least 32 ASCII letters/digits')
         self.token, self.analyze, self.calls = token, analyze, []
+        self.propose_patch = propose_patch
         super().__init__(('127.0.0.1', port), Handler)
         self.origin = 'http://127.0.0.1:' + str(self.server_port)
 
@@ -81,7 +83,7 @@ class Handler(BaseHTTPRequestHandler):
         supplied = self.headers.get('Authorization', '')
         if not hmac.compare_digest(supplied.encode(), ('Bearer ' + self.server.token).encode()):
             return self.reply(401, {'error': 'Workspace authentication required'})
-        if self.path not in ('/api/preview', '/api/investigate'):
+        if self.path not in ('/api/preview', '/api/investigate', '/api/propose', '/api/export'):
             return self.reply(404, {'error': 'Not found'})
         if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
             return self.reply(415, {'error': 'Use a length-delimited JSON request'})
@@ -104,6 +106,11 @@ class Handler(BaseHTTPRequestHandler):
             if self.path == '/api/preview':
                 return self.reply(200, {'files': files, 'workflows': sorted(WORKFLOWS),
                                         'provider': provider_info(), 'submitted_to_model': False})
+            if self.path == '/api/export':
+                candidate, hashes = export_candidate(archive, data['selected'], data.get('patch'),
+                                                      approved=data.get('approved'))
+                return self.reply(200, {'archive': base64.b64encode(candidate).decode(), 'files': hashes,
+                                       'scope': 'selected files only', 'tests_executed': False})
             if data.get('consent') is not True:
                 return self.reply(400, {'error': 'Approve submission of nonconfidential selected files first'})
             if data.get('provider') != provider_info()['id']:
@@ -113,7 +120,10 @@ class Handler(BaseHTTPRequestHandler):
             if len(self.server.calls) >= 5:
                 return self.reply(429, {'error': 'Workspace limit reached; wait before another investigation'})
             self.server.calls.append(now)
-            result = self.server.analyze(archive, data['selected'], data.get('task'), data.get('workflow'))
+            if self.path == '/api/propose':
+                result = self.server.propose_patch(archive, data['selected'], data.get('task'))
+            else:
+                result = self.server.analyze(archive, data['selected'], data.get('task'), data.get('workflow'))
             self.reply(200, result)
         except (ValueError, TypeError, KeyError, binascii.Error, WorkspaceError):
             self.reply(400, {'error': 'Invalid archive, selection or task; check the input limits'})

@@ -18,4 +18,4 @@ The server binds only `127.0.0.1`, enforces its exact Host and Origin, requires 
 
 Seven real loopback HTTP test methods exercise authentication, origin/host rejection, preview, consent/input limits, rate limits, provider/unexpected failures and asset path controls. Browser QA uses synthetic files with a simulated provider. Earlier live NVIDIA checks establish provider availability separately; this does not claim a live browser-to-model test or security audit.
 
-Patch review/application, an agent tool loop, isolated execution and a public-service-compatible provider remain unfinished. Do not expose this development server through a public tunnel.
+The next [patch review workflow](patch-review.md) supports one selected-file proposal and approved ZIP export. It does not modify your checkout. An autonomous agent tool loop, isolated execution and production provider/access/hosting validation remain unfinished. Do not expose this development server through a public tunnel.

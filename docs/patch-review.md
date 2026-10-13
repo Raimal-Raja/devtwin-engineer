@@ -1,0 +1,11 @@
+# Reviewed patch candidates
+
+The [local browser workspace](local-workspace.md) now supports a focused, single-file patch proposal and an approved selected-file ZIP export. It calls the explicitly selected provider once using the shared implementation guidance. The model must return the complete replacement text and explanation; no model-generated command is executed.
+
+Preview selected source, enter a scoped task and approve provider submission. Choose **Propose a focused patch**. Review both the displayed diff and complete replacement, then approve export and download **selected files with patch**. This creates a new ZIP in memory. The original uploaded ZIP and files on disk remain unchanged. The export contains only selected files, so it is not a complete project snapshot unless the selection was complete. Copying it into an actual checkout requires a separate deliberate action.
+
+The backend binds proposals to the original selected-file SHA-256. Unknown/unselected paths, stale hashes, malformed proposals, empty/no-op replacements, oversized or binary replacements, and common secret patterns are rejected. Conventional existing test paths are read-only in this increment; regression-test additions are not implemented yet. Other selected files retain their content bytes. A ZIP export validates the patch again and requires explicit review approval. Export makes no model call and is separate from the shared five-per-minute inference limit.
+
+Source investigation and patch generation are currently separate single-step calls. This is not yet an autonomous investigation/repair/test loop. A valid JSON response or accepted diff does not establish correctness. No test results are produced by this workflow; candidate syntax and behavior must be verified in the next execution stage.
+
+Direct patch tests cover source/hash conflicts, file scope, test preservation, approval, secret/binary/size rejection and model-output validation. HTTP checks cover provider consent/shared limits and approved export with stale-hash rejection. Browser QA uses a simulated provider, verifies review controls and downloads a ZIP whose content is checked independently.
