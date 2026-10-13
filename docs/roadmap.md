@@ -13,6 +13,7 @@
 - Runtime adapters: official project layouts are documented and an explicit-project installer is checked in temporary projects. Discovery and activation remain unverified; no global agent configuration is changed.
 - Runtime evaluation: a fresh explicit Codex CLI session started in increment 14, but Windows sandbox helper setup blocked shell and JavaScript access. The agent reported the blocker; successful resource reads and repair remain unverified. See the [repeatable smoke procedure](runtime-smoke-test.md).
 - HTTP development: optional FastAPI checkout fixture covers application 500 failures, strict request 422 validation, explicit discounts, zero floor and health preservation with in-process HTTP tests. Independent agent behavior remains unverified.
+- Updated product scope: Codex/Claude plugin packages share the canonical skills; the initial web application is the user-selected plugin catalog and setup dashboard. Package generation, setup instructions, workflow search and task handoff export are implemented; live runtime installation remains unverified.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; HTTP fixture agent evaluation.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
 - Then: evaluate all workflows against their tasks and rubrics, extend filesystem/platform coverage, and establish independent held-out tasks.

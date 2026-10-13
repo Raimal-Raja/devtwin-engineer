@@ -14,6 +14,8 @@
 | Explicit agent invocation | Inconclusive attempt | Fresh evaluator contexts were dispatched but returned no results before interruption |
 | Codex automatic skill discovery | Unverified | No installed clean-session discovery check |
 | Runtime folder installation | Exercised locally | Fresh temporary projects for `.agents/skills` and `.claude/skills`; resources validate, existing files preserved |
+| Plugin package structure | Exercised locally | Portable, Codex-compatible and Claude manifests; local marketplaces resolve to a shared validated skill; live plugin installation remains unverified |
+| Web catalog/setup application | Exercised locally | Workflow search, runtime/format/OS selection, task handoff and package downloads; browser checks and Node logic tests; no browser agent execution |
 | Codex CLI tooling | Fresh session started; task tools blocked | `0.162.0-alpha.17.2`; shell/JavaScript Windows sandbox setup errors; no successful skill read or repair; [increment 14](../evaluations/results/increment-14.md) |
 | Claude Code integration | Adapter documented, runtime unverified | Command not found on development PATH; no runtime session/version exercised |
 | FastAPI applications | Synthetic HTTP fixture; agent behavior unverified | Optional isolated environment, in-process TestClient checks; no live deployment/auth/database coverage; [procedure](fastapi-evaluation.md) |

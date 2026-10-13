@@ -5,7 +5,7 @@ description: Investigate Python code, compatibility changes, and installation fa
 
 # DevTwin Engineer
 
-Initial scope: small Python libraries. FastAPI integration remains planned; expanded reviews are development drafts.
+Initial scope: small Python libraries and a synthetic FastAPI checkout fixture. Expanded reviews are development drafts; actual agent behavior remains unverified.
 
 All thirteen capabilities have references. Four core repair references have local fixture checks; the nine expanded references are drafts with development tasks and rubrics. Agent-level behavior remains unverified. Database/security/performance examples use synthetic local data and do not establish production safety or performance.
 
