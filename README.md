@@ -2,7 +2,7 @@
 
 A local skill for evidence-based Python investigation and focused repairs.
 
-Four core workflows cover repository understanding, reproduction, implementation, and regression verification. Six draft workflows cover tracing, impact, API compatibility, dependencies, database migrations and security, with synthetic tasks and rubrics. Performance, documentation verification and delivery preparation remain planned; agent-level behavior is unverified.
+All thirteen capabilities have workflow references: four core repair workflows and nine expanded drafts, with synthetic development tasks and rubrics. Local package/fixture checks exist; agent-level effectiveness and runtime activation remain unverified.
 
 Start with [SKILL.md](SKILL.md), [local development](docs/installation.md), the [evaluation procedure](docs/evaluation.md), and the [incremental roadmap](docs/roadmap.md).
 

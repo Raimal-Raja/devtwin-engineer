@@ -9,10 +9,10 @@
 - Capability development: feature tracing and conservative change-impact references are drafts with an order-flow fixture, realistic requests, failure cases and rubrics; agent-level evaluation remains pending.
 - Capability development: API compatibility and dependency diagnosis are drafts with permissive/strict JSON consumers and an offline synthetic resolver exercise; agent-level and real-project behavior remain unverified.
 - Capability development: database/security reviews are drafts with existing-data SQLite migration checks and synthetic ownership/access cases. Production engine, concurrency and authentication integration remain unverified.
+- Capability development: all thirteen references are present; final three drafts cover performance, documentation verification and delivery. Local measurements and examples are development evidence, not a passed agent-evaluation/release gate.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
-- Then: evaluate current drafts and develop performance, documentation-verification and delivery workflows with realistic tasks and rubrics.
-- Then: bounded context inventory and read-only Git inspection helpers with adversarial filesystem tests.
+- Then: evaluate all workflows against their tasks and rubrics, extend filesystem/platform coverage, and establish independent held-out tasks.
 - Then: tested Codex and Claude Code adapters.
 - Then: 15–20 independent baseline comparisons and authorized pilot testing.
 - Finally: reviewed license/security contact, static site, authorized hosting and release.

@@ -1,0 +1,16 @@
+{
+  "python": "3.12.14",
+  "platform": "Windows",
+  "rows": 3000,
+  "requests": 150,
+  "repetitions": 7,
+  "samples": {
+    "baseline_ns": [42976000, 44575300, 43954900, 54528200, 47708300, 47137300, 43122300],
+    "candidate_ns": [1185400, 977200, 905000, 928400, 1015500, 992500, 982900]
+  },
+  "median_ns": {"baseline_ns": 44575300, "candidate_ns": 982900},
+  "rows_examined": {"baseline": 450000, "candidate": 3000},
+  "profile_total_calls": 456154,
+  "scope": "Local synthetic microbenchmark; no agent, I/O, concurrency or production claim",
+  "measurement_context": "Local project verification was also running; shared machine load was not isolated."
+}

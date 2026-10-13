@@ -69,6 +69,8 @@ def validate(root):
                 'references/feature-tracing.md', 'references/change-impact.md',
                 'references/api-compatibility.md', 'references/dependency-diagnosis.md',
                 'references/database-review.md', 'references/security-review.md',
+                'references/performance-investigation.md', 'references/documentation-verification.md',
+                'references/delivery-preparation.md', 'templates/review-summary.md',
                 'references/repository-understanding.md', 'references/bug-reproduction.md',
                 'references/implementation.md', 'references/regression-testing.md',
                 'templates/evidence-ledger.md', 'templates/verification-report.md']
