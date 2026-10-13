@@ -7,9 +7,10 @@
 - Packaging: explicit-allowlist private ZIP builder validates selected resources in isolation, records file hashes, and passes clean-extraction checks. Runtime discovery and public release remain unverified.
 - Local verification: one command checks source metadata/links, executed tests and skips, archive integrity and clean extraction without hosted CI or publication.
 - Capability development: feature tracing and conservative change-impact references are drafts with an order-flow fixture, realistic requests, failure cases and rubrics; agent-level evaluation remains pending.
+- Capability development: API compatibility and dependency diagnosis are drafts with permissive/strict JSON consumers and an offline synthetic resolver exercise; agent-level and real-project behavior remain unverified.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
-- Then: evaluate tracing/impact drafts and develop the remaining seven capabilities with realistic tasks and rubrics.
+- Then: evaluate current drafts and develop the remaining five capabilities with realistic tasks and rubrics.
 - Then: bounded context inventory and read-only Git inspection helpers with adversarial filesystem tests.
 - Then: tested Codex and Claude Code adapters.
 - Then: 15–20 independent baseline comparisons and authorized pilot testing.

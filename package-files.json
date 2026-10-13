@@ -3,6 +3,8 @@
   "references/routing.md",
   "references/feature-tracing.md",
   "references/change-impact.md",
+  "references/api-compatibility.md",
+  "references/dependency-diagnosis.md",
   "references/repository-understanding.md",
   "references/bug-reproduction.md",
   "references/implementation.md",

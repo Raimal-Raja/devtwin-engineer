@@ -67,6 +67,7 @@ def validate(root):
     root = root.resolve()
     required = ['SKILL.md', 'references/routing.md',
                 'references/feature-tracing.md', 'references/change-impact.md',
+                'references/api-compatibility.md', 'references/dependency-diagnosis.md',
                 'references/repository-understanding.md', 'references/bug-reproduction.md',
                 'references/implementation.md', 'references/regression-testing.md',
                 'templates/evidence-ledger.md', 'templates/verification-report.md']

@@ -1,0 +1,2 @@
+devtwin-demo-core==2.0
+devtwin-demo-addon==1.0
