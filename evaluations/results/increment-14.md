@@ -1,0 +1,13 @@
+# Increment 14: fresh CLI smoke attempt — 2026-10-13
+
+Prepared a fresh checkout exercise at `.workspaces/codex-smoke-14` and installed the 28-resource private bundle into its target's `.agents/skills/devtwin-engineer`. Used Codex CLI `0.162.0-alpha.17.2`, configured default model, ephemeral mode, workspace-write sandbox, explicit skill mention and no supplied correction. The prompt restricted work to the target, preserved tests/user note, prohibited evaluator/source reads and delegation, and supplied the Python executable. Consulted [official non-interactive guidance](https://learn.chatgpt.com/docs/non-interactive-mode) and local CLI help.
+
+The initial host-sandbox invocation exited 1 before session startup: `Error finding codex home: Could not find home directory`. An approved host-level retry started a fresh session while retaining the child workspace-write sandbox. That session exited 0, but both shell attempts failed before execution with `helper_unknown_error: setup refresh had errors`. Two JavaScript fallback attempts also failed; the reported kernel diagnostics identified the same Windows sandbox setup error.
+
+The agent announced intent to use the skill and attempted to read SKILL.md, routing and templates. No read succeeded, no reproduction/tests ran in the agent session, and no repair was made. Its final message accurately reported blocked execution and unverified behavior. This supports observing a blocked-status report only; it does not establish resource loading, workflow adherence, automatic selection or runtime compatibility. Raw logs remain private in the ignored run directory.
+
+The parent evaluator then executed the fixture's five tests and three acceptance methods: both suites failed on the original missing/None discount bug. Protected test and user-note hashes remained unchanged. The candidate checkout matches the deliberately broken source fixture. Evaluator execution works in the parent environment; that does not establish tool availability in the fresh CLI sandbox.
+
+Added a repeatable smoke-test procedure with separate startup, resource-read, repair, verification and preservation evidence. Runtime gate remains blocked; do not bypass sandbox protections or count this task as a successful repair. No public release or global configuration change was performed.
+
+Project verification passed all three local gates on Windows/Python 3.12.14: 54 tests ran, 52 passed and two real filesystem symlink checks were skipped because creation was unavailable. The 28-resource archive validated and clean extraction passed. `git diff --check` passed. These results concern package/tooling integrity, separately from the blocked runtime exercise.
