@@ -5,6 +5,8 @@
   "references/change-impact.md",
   "references/api-compatibility.md",
   "references/dependency-diagnosis.md",
+  "references/database-review.md",
+  "references/security-review.md",
   "references/repository-understanding.md",
   "references/bug-reproduction.md",
   "references/implementation.md",

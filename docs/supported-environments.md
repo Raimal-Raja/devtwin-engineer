@@ -5,6 +5,8 @@
 | Python library development fixture | Exercised locally | Checkout tests and evaluator-side acceptance checks |
 | Tracing and impact workflows | Draft; agent-level behavior unverified | Synthetic order-flow fixture, tasks and rubrics |
 | API and dependency workflows | Draft; agent-level behavior unverified | JSON clients and offline synthetic wheel metadata; no HTTP verification |
+| Database and security workflows | Draft; agent-level behavior unverified | In-memory SQLite migration and synthetic ownership checks; no production or authentication integration |
+| Migration fixture engine | Exercised locally | SQLite 3.53.1 bundled with Python 3.12.14; in-memory, single-connection checks only |
 | Offline resolver tooling | Requires pip dry-run/report support | Local Python environment has pip 26.2.1; no package installation is performed by the exercise |
 | Windows helper execution | Exercised locally | Bundled Python 3.12.14; standard-library unittest |
 | Python 3.10+ syntax target | Declared, minimum-version execution pending | Helpers use Python 3.10-compatible syntax and APIs |
