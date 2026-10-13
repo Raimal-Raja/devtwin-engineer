@@ -26,7 +26,9 @@ Exit code 0 means inspection succeeded; 2 means an inaccessible/non-Git root, mi
 
 ## Package validation and checkout evaluation
 
-`check_project.py .` runs the local development gates in sequence and returns a JSON report. It validates metadata and links, runs trusted project tests in a separate process, then builds and verifies a temporary archive. Failed, empty or entirely skipped suites fail the gate; partial skips remain visible. Test stdout/stderr is captured in the test log. Test execution has a 120-second timeout. This command is for trusted project source because tests execute Python code.
+`check_project.py .` returns a JSON report for metadata/links, Python tests, web tests when the source has a `web/` directory, and temporary archive build/verification. Python tests run in a separate process with a 120-second timeout. The web gate runs every `web/**/*.test.mjs` file with Node's TAP reporter and a 60-second timeout; missing Node, no suites, test failures and entirely skipped suites fail the gate. An empty file's implicit passing result is conservatively rejected by matching its reported name against known suite paths. Tests deliberately named exactly after their suite path are rejected too. This parser is exercised with Node 23.6.1, not a general TAP parser.
+
+The web gate runs even when Python tests fail, so both suites' outcomes remain visible. Archive verification proceeds only after the earlier gates pass. Test stdout/stderr, counts and partial skips remain in the report. This command is for trusted source because tests execute Python and JavaScript code. Core package validation and skill installation do not require Node; checking the source web application does.
 
 `verify_archive.py ARCHIVE.zip` checks paths, portable filenames, entry/size limits, duplicate/case-colliding names, symlink entries, manifest membership and hashes. It validates links after copying checked payloads into a temporary directory, without executing archived Python. Integrity is not authenticity: a manifest can be replaced alongside malicious files, so no signature verification is claimed.
 

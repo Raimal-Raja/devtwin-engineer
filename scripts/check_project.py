@@ -4,6 +4,8 @@ import contextlib
 import io
 import json
 from pathlib import Path
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -35,6 +37,39 @@ def test_worker(root):
             'failures': len(result.failures), 'errors': len(result.errors), 'log': output.getvalue()}
 
 
+def web_tests(root):
+    """Run every declared web suite; missing Node/tests and all-skipped suites fail."""
+    root = Path(root).resolve()
+    suites = sorted((root / 'web').rglob('*.test.mjs'))
+    if not suites:
+        return {'passed': False, 'error': 'No web test suites found', 'tests_run': 0}
+    node = shutil.which('node')
+    if not node:
+        return {'passed': False, 'error': 'Node.js is unavailable', 'tests_run': 0}
+    try:
+        result = subprocess.run([node, '--test', '--test-reporter=tap', *map(str, suites)],
+                                cwd=root, capture_output=True, text=True, encoding='utf-8',
+                                errors='replace', timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {'passed': False, 'error': type(exc).__name__, 'tests_run': 0}
+    counts = {key: int(value) for key, value in re.findall(
+        r'^# (tests|pass|fail|skipped|cancelled) (\d+)\s*$', result.stdout, re.MULTILINE)}
+    # Node reports an otherwise empty test file as a passing file-level case.
+    # Conservatively reject those named file results instead of counting them as tests.
+    def normalized(name):
+        return re.sub(r'/+', '/', name.replace('\\', '/')).casefold()
+    suite_names = {normalized(str(name)) for suite in suites
+                   for name in (suite, suite.relative_to(root))}
+    empty_suites = [name for name in re.findall(r'^# Subtest: (.+)$', result.stdout, re.MULTILINE)
+                    if normalized(name) in suite_names]
+    return {'passed': result.returncode == 0 and counts.get('pass', 0) > 0 and not empty_suites,
+            'exit_code': result.returncode, 'tests_run': counts.get('tests', 0),
+            'passed_tests': counts.get('pass', 0), 'failures': counts.get('fail', 0),
+            'skipped': counts.get('skipped', 0), 'cancelled': counts.get('cancelled', 0),
+            'empty_suites': empty_suites,
+            'log': result.stdout + result.stderr}
+
+
 def check(root):
     root = Path(root).resolve()
     gates = []
@@ -49,7 +84,9 @@ def check(root):
         raise ValueError('Test worker could not complete')
     tests = json.loads(worker.stdout)
     gates.append({'gate': 'tests', **tests})
-    if not tests['passed']:
+    if (root / 'web').is_dir():
+        gates.append({'gate': 'web_tests', **web_tests(root)})
+    if any(not gate['passed'] for gate in gates):
         return {'passed': False, 'gates': gates}
     with tempfile.TemporaryDirectory() as folder:
         archive = Path(folder) / 'skill.zip'
