@@ -66,6 +66,7 @@ def validate(root):
         return ['Package root must be a real directory, not a link or junction']
     root = root.resolve()
     required = ['SKILL.md', 'references/routing.md',
+                'references/feature-tracing.md', 'references/change-impact.md',
                 'references/repository-understanding.md', 'references/bug-reproduction.md',
                 'references/implementation.md', 'references/regression-testing.md',
                 'templates/evidence-ledger.md', 'templates/verification-report.md']

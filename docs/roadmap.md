@@ -6,9 +6,10 @@
 - Helper development: package validation expanded to documentation links, bounded UTF-8 reads, explicit scalar metadata and unsafe-path rejection. It remains a documented subset of YAML and Markdown validation.
 - Packaging: explicit-allowlist private ZIP builder validates selected resources in isolation, records file hashes, and passes clean-extraction checks. Runtime discovery and public release remain unverified.
 - Local verification: one command checks source metadata/links, executed tests and skips, archive integrity and clean extraction without hosted CI or publication.
+- Capability development: feature tracing and conservative change-impact references are drafts with an order-flow fixture, realistic requests, failure cases and rubrics; agent-level evaluation remains pending.
 - Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
-- Then: remaining nine capabilities with realistic tasks and rubrics.
+- Then: evaluate tracing/impact drafts and develop the remaining seven capabilities with realistic tasks and rubrics.
 - Then: bounded context inventory and read-only Git inspection helpers with adversarial filesystem tests.
 - Then: tested Codex and Claude Code adapters.
 - Then: 15–20 independent baseline comparisons and authorized pilot testing.

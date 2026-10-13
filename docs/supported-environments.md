@@ -3,6 +3,7 @@
 | Component | Status | Evidence |
 | --- | --- | --- |
 | Python library development fixture | Exercised locally | Checkout tests and evaluator-side acceptance checks |
+| Tracing and impact workflows | Draft; agent-level behavior unverified | Synthetic order-flow fixture, tasks and rubrics |
 | Windows helper execution | Exercised locally | Bundled Python 3.12.14; standard-library unittest |
 | Python 3.10+ syntax target | Declared, minimum-version execution pending | Helpers use Python 3.10-compatible syntax and APIs |
 | Explicit agent invocation | Inconclusive attempt | Fresh evaluator contexts were dispatched but returned no results before interruption |

@@ -2,7 +2,7 @@
 
 A local skill for evidence-based Python investigation and focused repairs.
 
-Increment 1 contains four core workflows: repository understanding, reproduction, implementation, and regression verification. The other nine capabilities remain planned.
+Four core workflows cover repository understanding, reproduction, implementation, and regression verification. Feature tracing and change-impact investigation are draft workflows with development tasks and rubrics. Seven further capabilities remain planned; agent-level behavior is unverified.
 
 Start with [SKILL.md](SKILL.md), [local development](docs/installation.md), the [evaluation procedure](docs/evaluation.md), and the [incremental roadmap](docs/roadmap.md).
 
