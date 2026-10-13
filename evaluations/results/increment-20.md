@@ -1,0 +1,11 @@
+# Increment 20: selected project ingestion and investigation — 2026-10-13
+
+Added in-memory selected-file ZIP ingestion and a single-step internal investigation service. Archives are never extracted and model output is never executed. The service loads one selected shared workflow reference, sends bounded explicitly selected source text and returns schema-validated findings with file/line citations and source hashes. The result records no command execution or applied changes.
+
+Six new test methods cover exact file selection, hashes, traversal/absolute paths, case collisions, symlinks, secret/binary screening, missing files, selection/entry/content limits, invalid workflows/tasks, no network on invalid inputs, malformed responses and invented/out-of-range citations. Prompt tests establish that repository instructions are marked untrusted evidence; they do not establish model resistance to prompt injection.
+
+An approved live NVIDIA request sent only the built-in two-line synthetic `total` function, the task and the bug-reproduction reference. Nemotron Ultra returned a complete JSON report with valid references to lines 1 and 2. It identified the subtraction involving `None` and proposed three checks. The response also used imprecise wording about the existing default and assumed the intended contract was a zero discount. These are model-generated hypotheses/proposals, not established requirements or executed verification. The outer result consistently marked source analysis unverified and recorded zero executed commands/changes. Live availability passed; model correctness, account credits and credential rotation are not established by this check.
+
+All project gates passed: 74 Python tests ran, with 72 passing and two Windows symlink cases skipped; all six web tests passed. Package validation and archive verification passed. Additional selection/excluded-path boundary assertions passed in a focused rerun after the full check. The portable skill archive is unchanged; backend code remains outside browser/plugin downloads.
+
+Public browser/API routing, authentication/usage limits, a public-service-compatible provider, agent tools, patch review and isolated execution remain incomplete. NVIDIA trial inference remains an internal development integration. Public Site assets and audience were not changed in this increment.
