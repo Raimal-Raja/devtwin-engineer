@@ -15,11 +15,12 @@
 - HTTP development: optional FastAPI checkout fixture covers application 500 failures, strict request 422 validation, explicit discounts, zero floor and health preservation with in-process HTTP tests. Independent agent behavior remains unverified.
 - Updated product scope: Codex/Claude plugin packages share the canonical skills; the initial web application is the user-selected plugin catalog and setup dashboard. Package generation, setup instructions, workflow search and task handoff export are implemented; live runtime installation remains unverified.
 - Verification audit: the unified project gate now includes every declared web suite and rejects missing Node, empty suites and all-skipped runs. Synthetic failing JavaScript tests verify that the overall project check fails correctly.
-- Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; HTTP fixture agent evaluation.
+- Private candidate: fresh Codex library/HTTP repairs, blocked reproduction, automatic selection and expanded synthetic reviews have completed. Native Codex plugin installation/discovery and Claude manifest validation passed. Web hosting succeeded; see [completion status](completion-status.md).
+- Next: broader independent comparisons and authorized pilot feedback; Claude execution is deferred by the user until an authenticated runtime is available.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
 - Then: evaluate all workflows against their tasks and rubrics, extend filesystem/platform coverage, and establish independent held-out tasks.
-- Then: tested Codex and Claude Code adapters.
+- Then: close deferred Claude behavior and broader registered-plugin/platform coverage.
 - Then: 15–20 independent baseline comparisons and authorized pilot testing.
 - Finally: reviewed license/security contact, static site, authorized hosting and release.
 
-Private source repository: [Raimal-Raja/devtwin-engineer](https://github.com/Raimal-Raja/devtwin-engineer). Completed increments are committed and pushed after verification, as requested. Licensing, public publication, and release gates remain pending. No benchmark improvement or runtime compatibility is claimed.
+Private source repository: [Raimal-Raja/devtwin-engineer](https://github.com/Raimal-Raja/devtwin-engineer). Completed increments are committed and pushed after verification, as requested. The repository remains private with licensing undecided. The user confirmed preserving existing public website access. Formal release, independent effectiveness claims and deferred runtime gates remain pending.

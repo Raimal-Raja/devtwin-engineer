@@ -32,6 +32,7 @@ def build_plugins(root, output):
                 relative = entry.filename.removeprefix('devtwin-engineer/')
                 payloads['plugins/devtwin-engineer/skills/devtwin-engineer/' + relative] = bundle.read(entry)
         identity = {'name': 'devtwin-engineer', 'version': '0.0.1',
+                    'author': {'name': 'DevTwin Engineer'},
                     'description': 'Evidence-based Python investigation, focused repairs and regression verification.'}
         portable = dict(identity, **{'$schema': 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'})
         codex = dict(identity, skills='./skills/', interface={
