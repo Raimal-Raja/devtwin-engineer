@@ -11,6 +11,7 @@ The current product is the shared engineering skill, Codex/Claude plugin package
 | Claude package | Native 2.1.263 validator passed without warnings | Passed structural validation |
 | Claude workflow execution | CLI has no signed-in account; user chose to defer | Pending by user choice |
 | Web catalog and setup | Search/filter, setup selection, safe task rendering, copy/export, working package downloads, responsive browser checks | Exercised |
+| Standalone web agent | Requested after the dashboard candidate; NVIDIA backend adapter added with a successful synthetic live response | In progress; project ingestion, agent loop and isolated execution still missing |
 | Web hosting | Platform confirmed the updated deployment after the user confirmed existing public access | Live; public website, private repository |
 | Independent baseline comparisons/pilot | Existing fixtures are development examples, not held-out trials | Pending before effectiveness claims |
 | License/public release | User chose to keep private until decided | Pending; no public release |

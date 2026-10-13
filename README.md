@@ -8,6 +8,8 @@ Start with [SKILL.md](SKILL.md), [local development](docs/installation.md), the 
 
 See the [support matrix](docs/supported-environments.md) for exercised environments and pending runtime checks. Completed increments are pushed to the private GitHub repository after verification.
 
+The requested standalone web agent is now a separate implementation track. Its first [NVIDIA backend integration](docs/nvidia-backend.md) supports bounded internal trial calls; repository execution from the public website is still in progress.
+
 Private project adapters are documented for [Codex](integrations/codex/README.md) and [Claude Code](integrations/claude-code/README.md). Codex skill execution and plugin installation/discovery are exercised; Claude's package validates, with model execution deferred by the user. See [completion status](docs/completion-status.md).
 
 See [plugin and web setup](docs/plugins-and-web.md) to build plugin marketplaces or the web application. The dashboard offers workflow search, package downloads, runtime-specific setup and task handoff export.
