@@ -4,7 +4,7 @@ const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(B
 const signature=()=>JSON.stringify([archive,selection()]);
 function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-patch').disabled=true;$('download-patch').disabled=true;}
 function invalidate(){previewSignature='';provider='';report=null;clearPatch();$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
-function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent'])$(id).disabled=busy;for(const id of ['preview','investigate','propose'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch'])$(id).disabled=busy||!proposal;}
+function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github'])$(id).disabled=busy;for(const id of ['preview','investigate','propose'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch'])$(id).disabled=busy||!proposal;}
 async function request(route,data){
   const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+$('token').value},body:JSON.stringify(data),cache:'no-store'});
   const result=await response.json();
@@ -12,11 +12,19 @@ async function request(route,data){
   return result;
 }
 $('archive').addEventListener('change',async()=>{
+  $('github-source').textContent='Using an uploaded ZIP.';
   archive='';invalidate();const file=$('archive').files[0];if(!file)return;
   if(file.size>2*1024*1024){$('status').textContent='ZIP exceeds 2 MiB.';return;}
   try{const bytes=new Uint8Array(await file.arrayBuffer());let raw='';for(const byte of bytes)raw+=String.fromCharCode(byte);archive=btoa(raw);$('status').textContent='ZIP loaded locally. Select exact file paths and preview.';}catch{$('status').textContent='ZIP could not be loaded.';}
 });
 $('selected').addEventListener('input',invalidate);
+$('github').addEventListener('click',async()=>{
+  archive='';invalidate();lockInputs(true);$('status').textContent='Importing selected GitHub files; no model call…';$('github-source').textContent='Import pending.';
+  try{const result=await request('/api/github',{repository:$('repository').value.trim(),ref:$('ref').value.trim(),selected:selection()});
+    archive=result.archive;$('archive').value='';$('github-source').textContent=`${result.repository} · ${result.commit} · ${result.private?'Private':'Public'} · read-only import. No model submission.`;
+    $('status').textContent='GitHub import ready. Preview selected files before provider submission.';
+  }catch(error){$('github-source').textContent='No successful GitHub import.';$('status').textContent=error.message;}finally{lockInputs(false);$('workflow').disabled=true;}
+});
 $('preview').addEventListener('click',async()=>{
   invalidate();lockInputs(true);$('preview').disabled=true;$('status').textContent='Validating selection…';
   try{const current=signature();const result=await request('/api/preview',{archive,selected:selection()});if(current!==signature())throw new Error('Selection changed; preview again.');

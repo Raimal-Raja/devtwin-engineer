@@ -1,0 +1,13 @@
+# Read-only GitHub connection
+
+The internal [local workspace](local-workspace.md) can import selected files from GitHub without a plugin. This is not yet connected to the public catalog website and does not create commits, branches or pull requests.
+
+Enter `owner/repository` (or a plain `https://github.com/owner/repository` URL), an explicit branch/tag/commit and selected paths in the file-selection field. Click **Import selected GitHub files**, then preview the source. Import alone does not call an LLM. The page shows repository visibility and the pinned commit. Provider submission still requires separate approval and must comply with its data policy.
+
+The backend resolves the requested ref once, reads its Git tree, then fetches selected regular blobs by immutable SHA. It validates the Git blob hash and the existing text/secret/path/size rules before assembling an in-memory ZIP. Symlinks, submodules, incomplete/oversized trees and unselected content are not imported. No clone, archive extraction, hooks or project commands run. All requests go to fixed `api.github.com` GET endpoints, without following redirects or response-provided URLs. Imports share a separate two-per-minute local limit; provider limits are independent.
+
+Public repository access needs no GitHub key, subject to GitHub's [REST limits](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api). Private repository access optionally reads `DEVTWIN_GITHUB_TOKEN` from the backend environment. Use a fine-grained token limited to the desired repository with **Contents: read** permission; do not paste it into chat/browser fields or commit it. Account creation and granting token access are separate user actions. Private read access was tested with simulated responses, not a live private token. Importing private source does not authorize sending it to a trial/unpaid model service.
+
+See GitHub's [trees](https://docs.github.com/en/rest/git/trees) and [blobs](https://docs.github.com/en/rest/git/blobs) API documentation. The live development example imports only `src/requests/__version__.py` from public `psf/requests`. This checks source connection/preview, not Requests behavior or a complete engineering repair.
+
+All thirteen workflow references can be selected by the dispatcher and appear in the browser. Automated reference-routing checks use simulated model responses. They do not prove every workflow succeeds against arbitrary repositories. Codex development exercises cover the thirteen workflows with separate evidence; Claude model execution and the browser's isolated repair/test loop remain pending.

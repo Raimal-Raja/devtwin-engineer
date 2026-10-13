@@ -21,7 +21,10 @@ class ServerTests(unittest.TestCase):
         self.analyze = Mock(return_value={'status': 'unverified_source_analysis',
                                          'executed_commands': [], 'applied_changes': []})
         self.propose = Mock(return_value={'status': 'unverified_patch_proposal'})
-        self.server = WorkspaceServer(0, 'a' * 32, analyze=self.analyze, propose_patch=self.propose)
+        self.import_repo = Mock(return_value={'repository': 'x/y', 'commit': 'a' * 40,
+                                              'submitted_to_model': False, 'github_writes': False})
+        self.server = WorkspaceServer(0, 'a' * 32, analyze=self.analyze, propose_patch=self.propose,
+                                      import_repo=self.import_repo)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
         self.addCleanup(self.close)
@@ -118,5 +121,17 @@ class ServerTests(unittest.TestCase):
         self.assertFalse(json.loads(raw)['tests_executed'])
         self.assertEqual(self.call('/api/export', {**data, 'approved': True,
                                                  'patch': {**patch, 'base_sha256': 'stale'}})[0], 400)
+        self.analyze.assert_not_called()
+        self.propose.assert_not_called()
+
+    def test_github_import_is_authenticated_read_only_and_limited(self):
+        data = {'repository': 'x/y', 'ref': 'main', 'selected': ['a.py']}
+        self.assertEqual(self.call('/api/github', data, headers={'Authorization': 'bad'})[0], 401)
+        self.import_repo.assert_not_called()
+        for _ in range(2):
+            status, raw, _ = self.call('/api/github', data)
+            self.assertEqual(status, 200)
+            self.assertFalse(json.loads(raw)['submitted_to_model'])
+        self.assertEqual(self.call('/api/github', data)[0], 429)
         self.analyze.assert_not_called()
         self.propose.assert_not_called()

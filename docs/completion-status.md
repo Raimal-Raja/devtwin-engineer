@@ -13,6 +13,7 @@ The current product is the shared engineering skill, Codex/Claude plugin package
 | Web catalog and setup | Search/filter, setup selection, safe task rendering, copy/export, working package downloads, responsive browser checks | Exercised |
 | Standalone web agent | Multi-provider source investigation, hash-bound patch review and approved selected-file export through an authenticated loopback workspace | Internal preview; public execution, autonomous loop and isolated tests still missing |
 | Free-tier alternatives | Direct Groq/Gemini adapters and provider disclosure/consent added | Simulated checks; live account tests pending environment keys |
+| GitHub web connection | Commit-pinned selected-file importer and local browser controls | Public read/import tested; private access simulated, no GitHub writes |
 | Web hosting | Platform confirmed the updated deployment after the user confirmed existing public access | Live; public website, private repository |
 | Independent baseline comparisons/pilot | Existing fixtures are development examples, not held-out trials | Pending before effectiveness claims |
 | License/public release | User chose to keep private until decided | Pending; no public release |

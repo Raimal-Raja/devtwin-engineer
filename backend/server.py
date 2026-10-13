@@ -13,6 +13,7 @@ from .investigate import WORKFLOWS, investigate
 from .nvidia import ProviderError
 from .providers import provider_info
 from .patches import export_candidate, propose
+from .github import GithubError, import_repository
 from .workspace import WorkspaceError, ingest_zip
 
 UI = Path(__file__).parent / 'ui'
@@ -20,11 +21,12 @@ MAX_BODY = 3 * 1024 * 1024
 
 
 class WorkspaceServer(HTTPServer):
-    def __init__(self, port, token, *, analyze=investigate, propose_patch=propose):
+    def __init__(self, port, token, *, analyze=investigate, propose_patch=propose, import_repo=import_repository):
         if not isinstance(token, str) or len(token) < 32 or not token.isascii() or not token.isalnum():
             raise ValueError('DEVTWIN_SESSION_TOKEN must contain at least 32 ASCII letters/digits')
         self.token, self.analyze, self.calls = token, analyze, []
         self.propose_patch = propose_patch
+        self.import_repo, self.import_calls = import_repo, []
         super().__init__(('127.0.0.1', port), Handler)
         self.origin = 'http://127.0.0.1:' + str(self.server_port)
 
@@ -83,7 +85,7 @@ class Handler(BaseHTTPRequestHandler):
         supplied = self.headers.get('Authorization', '')
         if not hmac.compare_digest(supplied.encode(), ('Bearer ' + self.server.token).encode()):
             return self.reply(401, {'error': 'Workspace authentication required'})
-        if self.path not in ('/api/preview', '/api/investigate', '/api/propose', '/api/export'):
+        if self.path not in ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github'):
             return self.reply(404, {'error': 'Not found'})
         if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
             return self.reply(415, {'error': 'Use a length-delimited JSON request'})
@@ -99,6 +101,15 @@ class Handler(BaseHTTPRequestHandler):
             if len(body) != length:
                 raise ValueError()
             data = json.loads(body)
+            if self.path == '/api/github':
+                if not isinstance(data, dict):
+                    raise ValueError()
+                now = time.monotonic()
+                self.server.import_calls = [stamp for stamp in self.server.import_calls if now - stamp < 60]
+                if len(self.server.import_calls) >= 2:
+                    return self.reply(429, {'error': 'GitHub import limit reached; wait before importing again'})
+                self.server.import_calls.append(now)
+                return self.reply(200, self.server.import_repo(data.get('repository'), data.get('ref'), data.get('selected')))
             if not isinstance(data, dict) or not isinstance(data.get('archive'), str):
                 raise ValueError()
             archive = base64.b64decode(data['archive'], validate=True)
@@ -128,6 +139,8 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, TypeError, KeyError, binascii.Error, WorkspaceError):
             self.reply(400, {'error': 'Invalid archive, selection or task; check the input limits'})
         except ProviderError as exc:
+            self.reply(502, {'error': str(exc)})
+        except GithubError as exc:
             self.reply(502, {'error': str(exc)})
         except Exception:
             self.reply(500, {'error': 'Workspace request failed'})

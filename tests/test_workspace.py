@@ -6,7 +6,7 @@ import zipfile
 from unittest.mock import Mock
 
 from backend.workspace import WorkspaceError, ingest_zip
-from backend.investigate import investigate
+from backend.investigate import ROOT, WORKFLOWS, investigate
 from backend.nvidia import ProviderError
 
 
@@ -88,3 +88,15 @@ class WorkspaceTests(unittest.TestCase):
             with self.assertRaises(WorkspaceError):
                 investigate(bundle([('a.py', 'pass')]), ['a.py'], task, workflow, send=send)
         send.assert_not_called()
+
+    def test_all_thirteen_workflows_load_their_selected_reference(self):
+        self.assertEqual(len(WORKFLOWS), 13)
+        for workflow in sorted(WORKFLOWS):
+            with self.subTest(workflow=workflow):
+                send = Mock(return_value=self.report())
+                result = investigate(bundle([('a.py', 'pass')]), ['a.py'], 'Explain selected evidence', workflow, send=send)
+                payload = json.loads(send.call_args.args[0].split('\n', 1)[1])
+                self.assertEqual(payload['reference_guidance'],
+                                 (ROOT / 'references' / (workflow + '.md')).read_text(encoding='utf-8'))
+                self.assertEqual(result['workflow'], workflow)
+                self.assertEqual(result['executed_commands'], [])
