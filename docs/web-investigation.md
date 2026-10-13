@@ -14,4 +14,4 @@ python -m backend.investigate --smoke
 
 The command builds an in-memory two-line synthetic Python file and asks about an optional discount. It never uploads this repository. No real project or account credentials are included in the prompt.
 
-The [NVIDIA trial integration restrictions](nvidia-backend.md) still apply. This backend is separate from static dashboard/plugin downloads. Public provider access, authenticated routing, browser ingestion/review UI, an agent tool loop and isolated test execution remain required for the complete browser workflow.
+The [NVIDIA trial integration restrictions](nvidia-backend.md) still apply. A subsequent [internal browser workspace](local-workspace.md) adds authenticated loopback routing and selected-file preview/result review. This backend is separate from static dashboard/plugin downloads. Public provider access, production authentication/usage controls, an agent tool loop, patch review and isolated test execution remain required for the complete browser workflow.
