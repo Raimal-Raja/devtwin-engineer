@@ -1,8 +1,8 @@
 const $=id=>document.getElementById(id);
-let archive='',previewSignature='',report=null;
+let archive='',previewSignature='',report=null,provider='';
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
-function invalidate(){previewSignature='';report=null;$('consent').checked=false;$('investigate').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
+function invalidate(){previewSignature='';provider='';report=null;$('consent').checked=false;$('investigate').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
 function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent'])$(id).disabled=busy;}
 async function request(route,data){
   const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+$('token').value},body:JSON.stringify(data),cache:'no-store'});
@@ -21,13 +21,15 @@ $('preview').addEventListener('click',async()=>{
   try{const current=signature();const result=await request('/api/preview',{archive,selected:selection()});if(current!==signature())throw new Error('Selection changed; preview again.');
     $('files').textContent=result.files.map(file=>`${file.path}\nSHA-256: ${file.sha256}\n${file.content}`).join('\n\n');
     $('workflow').replaceChildren(...result.workflows.map(value=>{const option=document.createElement('option');option.value=value;option.textContent=value.replaceAll('-',' ');return option;}));
+    provider=result.provider.id;$('provider-details').textContent=`${result.provider.name} · ${result.provider.model}. ${result.provider.notice} ${result.provider.configured?'':'API key is not configured.'}`;
+    $('provider-consent').textContent=`I approve sending these selected, nonconfidential files and my task to ${result.provider.name} under the policy shown above.`;
     $('workflow').disabled=false;previewSignature=current;$('investigate').disabled=false;$('status').textContent='Preview ready. Nothing has been sent to the model.';
   }catch(error){$('status').textContent=error.message;}finally{lockInputs(false);$('workflow').disabled=!previewSignature;$('preview').disabled=false;}
 });
 $('investigate').addEventListener('click',async()=>{
   if(previewSignature!==signature()||!$('consent').checked){$('status').textContent='Preview current files and approve submission first.';return;}
   const current=signature();lockInputs(true);$('preview').disabled=true;$('investigate').disabled=true;$('status').textContent='Investigating source; no commands or tests are running…';report=null;$('export').disabled=true;
-  try{const result=await request('/api/investigate',{archive,selected:selection(),task:$('task').value,workflow:$('workflow').value,consent:true});
+  try{const result=await request('/api/investigate',{archive,selected:selection(),task:$('task').value,workflow:$('workflow').value,consent:true,provider});
     if(current!==signature())throw new Error('Selection changed; discard this response and investigate again.');
     report=result;$('result').textContent=JSON.stringify(result,null,2);$('export').disabled=false;$('status').textContent='Source analysis ready. Findings and proposed checks remain unverified.';
   }catch(error){$('result').textContent='No successful report.';$('status').textContent=error.message;}finally{lockInputs(false);$('preview').disabled=false;$('investigate').disabled=previewSignature!==signature();}

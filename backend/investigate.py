@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import zipfile
 
-from .nvidia import ProviderError, complete
+from .providers import ProviderError, complete
 from .workspace import SECRET, WorkspaceError, ingest_zip
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +61,7 @@ def investigate(archive, selected, task, workflow, *, send=complete):
     except (ValueError, TypeError, KeyError):
         raise ProviderError('Investigation response failed schema or source citation validation') from None
     return {'status': 'unverified_source_analysis', 'workflow': workflow,
+            'provider': response.get('provider', 'unspecified'), 'model': response.get('model', 'unspecified'),
             'executed_commands': [], 'applied_changes': [],
             'sources': [{'path': file['path'], 'sha256': file['sha256']} for file in files],
             'analysis': result,

@@ -2,9 +2,10 @@ import base64
 import http.client
 import io
 import json
+import os
 import threading
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import zipfile
 
 from backend.server import MAX_BODY, WorkspaceServer
@@ -13,6 +14,9 @@ from backend.nvidia import ProviderError
 
 class ServerTests(unittest.TestCase):
     def setUp(self):
+        env = patch.dict(os.environ, {'DEVTWIN_PROVIDER': 'nvidia'})
+        env.start()
+        self.addCleanup(env.stop)
         self.analyze = Mock(return_value={'status': 'unverified_source_analysis',
                                          'executed_commands': [], 'applied_changes': []})
         self.server = WorkspaceServer(0, 'a' * 32, analyze=self.analyze)
@@ -24,7 +28,7 @@ class ServerTests(unittest.TestCase):
             archive.writestr('a.py', 'pass\n')
         self.data = {'archive': base64.b64encode(stream.getvalue()).decode(),
                      'selected': ['a.py'], 'task': 'Explain',
-                     'workflow': 'repository-understanding', 'consent': True}
+                     'workflow': 'repository-understanding', 'consent': True, 'provider': 'nvidia'}
 
     def close(self):
         self.server.shutdown()
@@ -60,7 +64,7 @@ class ServerTests(unittest.TestCase):
         self.analyze.assert_not_called()
 
     def test_consent_and_input_validation(self):
-        for update in ({'consent': False}, {'archive': 'bad base64'}, {'selected': ['absent']}):
+        for update in ({'consent': False}, {'provider': 'groq'}, {'archive': 'bad base64'}, {'selected': ['absent']}):
             self.assertEqual(self.call('/api/investigate', {**self.data, **update})[0], 400)
         self.assertEqual(self.call(headers={'Content-Type': 'text/plain'})[0], 415)
         self.assertEqual(self.call(headers={'Content-Length': str(MAX_BODY + 1)})[0], 413)

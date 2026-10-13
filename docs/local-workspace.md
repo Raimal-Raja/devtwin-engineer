@@ -4,6 +4,8 @@ This increment connects browser ZIP selection, selected-file preview and source 
 
 Set the provider credential as `NVIDIA_API_KEY` in the backend environment. Set a separate `DEVTWIN_SESSION_TOKEN` with at least 32 random ASCII letters/digits. Neither value belongs in source control or command-line arguments. The browser session token is not the NVIDIA key. Enter it in the local page; it stays in page memory and is not stored by the application.
 
+Alternatively, select Groq or Gemini using `DEVTWIN_PROVIDER` and its environment key as described in [free-tier providers](free-providers.md). Preview displays the selected provider/model and notice before approval. It rejects a submission naming a different provider and never silently switches after a quota failure.
+
 From the repository root:
 
 ```powershell

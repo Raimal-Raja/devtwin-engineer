@@ -11,6 +11,7 @@ import time
 
 from .investigate import WORKFLOWS, investigate
 from .nvidia import ProviderError
+from .providers import provider_info
 from .workspace import WorkspaceError, ingest_zip
 
 UI = Path(__file__).parent / 'ui'
@@ -38,6 +39,17 @@ class Handler(BaseHTTPRequestHandler):
         pass  # No credentials, request paths or project data in HTTP logs.
 
     def reply(self, status, payload, content_type='application/json'):
+        # Closing with an unread, already-sent POST body can reset a Windows
+        # connection before the client receives the rejection. Drain only
+        # length-delimited bodies within the normal limit; never interpret them.
+        if self.command == 'POST' and status >= 400 and not getattr(self, '_body_consumed', False):
+            try:
+                remaining = int(self.headers.get('Content-Length', '0'))
+                if 0 < remaining <= MAX_BODY and not self.headers.get('Transfer-Encoding'):
+                    self.rfile.read(remaining)
+            except (ValueError, OSError):
+                pass
+            self._body_consumed = True
         raw = json.dumps(payload).encode() if content_type == 'application/json' else payload
         self.send_response(status)
         self.send_header('Content-Type', content_type)
@@ -81,6 +93,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(413, {'error': 'Request size rejected'})
         try:
             body = self.rfile.read(length)
+            self._body_consumed = True
             if len(body) != length:
                 raise ValueError()
             data = json.loads(body)
@@ -89,9 +102,12 @@ class Handler(BaseHTTPRequestHandler):
             archive = base64.b64decode(data['archive'], validate=True)
             files = ingest_zip(archive, data.get('selected'))
             if self.path == '/api/preview':
-                return self.reply(200, {'files': files, 'workflows': sorted(WORKFLOWS), 'submitted_to_model': False})
+                return self.reply(200, {'files': files, 'workflows': sorted(WORKFLOWS),
+                                        'provider': provider_info(), 'submitted_to_model': False})
             if data.get('consent') is not True:
                 return self.reply(400, {'error': 'Approve submission of nonconfidential selected files first'})
+            if data.get('provider') != provider_info()['id']:
+                return self.reply(400, {'error': 'Preview and approve the current provider before submission'})
             now = time.monotonic()
             self.server.calls = [stamp for stamp in self.server.calls if now - stamp < 60]
             if len(self.server.calls) >= 5:
