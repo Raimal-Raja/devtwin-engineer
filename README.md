@@ -17,4 +17,4 @@ python scripts/validate_package.py .
 
 Run all local development gates with `python scripts/check_project.py .`; the JSON report preserves failures and skips and checks a temporary archive after extraction.
 
-Python 3.10+ is required; local checks use no third-party dependencies. The deliberately broken checkout fixture is copied to temporary directories for checks. Agent execution may incur runtime costs. Clean-session integrations, benchmarks, licensing, and public hosting remain pending.
+Python 3.10+ is required; core local checks use no third-party dependencies. The [optional FastAPI fixture](docs/fastapi-evaluation.md) needs its isolated dependency environment and is skipped when unavailable. Deliberately broken fixtures are copied to temporary directories for checks. Agent execution may incur runtime costs. Clean-session integrations, benchmarks, licensing, and public hosting remain pending.

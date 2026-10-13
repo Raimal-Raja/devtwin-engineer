@@ -12,7 +12,8 @@
 - Capability development: all thirteen references are present; final three drafts cover performance, documentation verification and delivery. Local measurements and examples are development evidence, not a passed agent-evaluation/release gate.
 - Runtime adapters: official project layouts are documented and an explicit-project installer is checked in temporary projects. Discovery and activation remain unverified; no global agent configuration is changed.
 - Runtime evaluation: a fresh explicit Codex CLI session started in increment 14, but Windows sandbox helper setup blocked shell and JavaScript access. The agent reported the blocker; successful resource reads and repair remain unverified. See the [repeatable smoke procedure](runtime-smoke-test.md).
-- Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; FastAPI fixture.
+- HTTP development: optional FastAPI checkout fixture covers application 500 failures, strict request 422 validation, explicit discounts, zero floor and health preservation with in-process HTTP tests. Independent agent behavior remains unverified.
+- Next: independent core agent evaluation, blocked reproduction and preservation scenarios in clean sessions; HTTP fixture agent evaluation.
 - Evaluation status: two independent contexts were dispatched in increment 3 but returned no results before interruption. This gate remains open; see [recorded limitations](../evaluations/results/increment-3.md).
 - Then: evaluate all workflows against their tasks and rubrics, extend filesystem/platform coverage, and establish independent held-out tasks.
 - Then: tested Codex and Claude Code adapters.

@@ -1,0 +1,11 @@
+# Increment 15: optional FastAPI HTTP fixture — 2026-10-13
+
+Added a deliberately broken integer-unit checkout route, strict Pydantic request model and unaffected health route. Omitted/null discount requests produce HTTP 500; explicit discounts, zero floor and invalid-input 422 behavior are preserved by contract tests. Testing uses in-process TestClient requests following [official FastAPI guidance](https://fastapi.tiangolo.com/tutorial/testing/); no live listener or external service is exercised.
+
+Created an ignored project virtual environment using Python 3.12.14. Dependency download initially failed because sandbox socket access was denied; an approved retry installed into that environment. Recorded all installed package versions in the fixture requirements snapshot, including FastAPI 0.143.0, HTTPX 0.28.1, Starlette 1.7.0 and Pydantic 2.14.1. This snapshot is not a hash lockfile, platform-wide compatibility claim or security audit. The base interpreter remains without those dependencies.
+
+The project harness copies the fixture into a temporary directory, observes the two original HTTP failures, rejects a candidate that ignores explicit discounts, and verifies a reference optional-discount repair against five HTTP test methods. Tests and unrelated user note remain byte-identical. The canonical fixture stays broken. No agent performed this repair, and the supplied candidate is not independent evaluation evidence.
+
+The optional test visibly skips under the base interpreter when FastAPI/HTTPX are absent; that skip was checked separately. Added setup instructions, a development request and rubric. Clean-session activation, actual FastAPI agent behavior, authentication, database integration, live deployment and production behavior remain unverified.
+
+Full `check_project.py .` execution using the isolated environment passed package validation, the test gate and the unchanged 28-resource archive gate. 55 project tests ran: 53 passed and two filesystem symlink checks were skipped because Windows creation was unavailable. The HTTP fixture harness executed successfully, including rejection of the incorrect candidate. `pip check` reported no broken requirements; `git diff --check` passed. The evaluation fixture and dependency snapshot are source-development resources and are not added to the runtime skill bundle.

@@ -16,7 +16,7 @@
 | Runtime folder installation | Exercised locally | Fresh temporary projects for `.agents/skills` and `.claude/skills`; resources validate, existing files preserved |
 | Codex CLI tooling | Fresh session started; task tools blocked | `0.162.0-alpha.17.2`; shell/JavaScript Windows sandbox setup errors; no successful skill read or repair; [increment 14](../evaluations/results/increment-14.md) |
 | Claude Code integration | Adapter documented, runtime unverified | Command not found on development PATH; no runtime session/version exercised |
-| FastAPI applications | Planned | No FastAPI fixture or dependency environment yet |
+| FastAPI applications | Synthetic HTTP fixture; agent behavior unverified | Optional isolated environment, in-process TestClient checks; no live deployment/auth/database coverage; [procedure](fastapi-evaluation.md) |
 | Linux and macOS | Unverified | No platform execution recorded |
 
 Explicit file-based invocation and automatic runtime discovery are separate checks. The project does not infer compatibility from shared Markdown metadata alone. Evaluation harnesses execute trusted synthetic code; they do not isolate untrusted repositories.
