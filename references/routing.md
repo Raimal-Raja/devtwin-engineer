@@ -17,4 +17,4 @@
 | Verify setup instructions/examples | [Documentation verification (draft)](documentation-verification.md) |
 | Prepare a change for review/release | [Delivery preparation (draft)](delivery-preparation.md), relevant existing checks |
 
-All thirteen capabilities now have references. Nine expanded workflows are drafts; agent-level evaluation and runtime activation remain unverified. Select only relevant workflows and state limitations honestly.
+All thirteen capabilities have references. Nine expanded workflows remain drafts with Codex development exercises; broader independent and Claude evaluation remain pending. Select only relevant workflows and state limitations honestly.

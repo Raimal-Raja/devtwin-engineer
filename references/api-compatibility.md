@@ -16,4 +16,4 @@ Example: replacing `total` with `amount` makes a client that reads `total` fail.
 
 Failure case: a strict consumer rejects unknown fields. An additive alias is not universally compatible.
 
-Expected output: contract differences, evidenced consumers, actual checks, proposed strategy if requested, and remaining compatibility uncertainty. Agent-level behavior remains unverified.
+Expected output: contract differences, evidenced consumers, actual checks, proposed strategy if requested, and remaining compatibility uncertainty. Broader independent and Claude evaluation remain pending.

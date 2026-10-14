@@ -16,4 +16,4 @@ Example: a synthetic repository lookup returns Bob's order to Alice because it a
 
 Failure case: passing Alice's user ID from an arbitrary request parameter can bypass an otherwise correct owner comparison. The real identity source must be inspected separately.
 
-Expected output: concrete finding and impact, source/reproduction evidence, focused repair if requested, actual positive/negative checks and unresolved trust boundaries. Agent-level behavior remains unverified.
+Expected output: concrete finding and impact, source/reproduction evidence, focused repair if requested, actual positive/negative checks and unresolved trust boundaries. Broader independent and Claude evaluation remain pending.

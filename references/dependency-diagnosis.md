@@ -16,4 +16,4 @@ Example: a synthetic add-on requires core `<2` while the project pins core `==2`
 
 Failure case: the resolver succeeds but an import or behavior check fails. Report the candidate incomplete and investigate the runtime incompatibility.
 
-Expected output: conflict evidence, focused candidate, commands/outcomes, checks not run and remaining uncertainty. Agent-level behavior remains unverified.
+Expected output: conflict evidence, focused candidate, commands/outcomes, checks not run and remaining uncertainty. Broader independent and Claude evaluation remain pending.

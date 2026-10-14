@@ -1,11 +1,12 @@
 # Private candidate completion status
 
-The current product is the shared engineering skill, Codex/Claude plugin packages, and the user-selected web catalog/setup dashboard. Browser agent execution is outside the current dashboard scope. The repository remains private; the user subsequently confirmed keeping the existing website public. Licensing is undecided.
+The project includes the shared engineering skill, Codex/Claude plugin packages, the public catalog/setup dashboard and a separate internal browser investigation/patch-review workspace. The user requested a complete standalone browser agent; its isolated execution and production backend remain unfinished. Codex is the current runtime priority and Claude execution is deferred by explicit user choice. The repository remains private; the existing website stays public by user confirmation. Licensing is undecided.
 
 | Gate | Current evidence | Status |
 | --- | --- | --- |
 | Canonical package and helpers | Metadata/links, bounded helper behavior, ZIP integrity/extraction and installer checks | Passed local gates |
 | Thirteen workflows | Four core workflows in fresh Codex repair/blocked tasks; nine expanded workflows in a combined synthetic review | Development coverage; broader validation pending |
+| Thirteen prerequisite resources | Every capability has required inputs/checks, failure boundary, reference, task, rubric and fixture | Resource audit passed; not a runtime/production certificate |
 | Codex project skill | Explicit library/HTTP repair, preservation, blocked-reporting and ordinary automatic selection | Exercised |
 | Codex plugin | Native marketplace/install commands and prompt discovery in a separate temporary CLI home | Installation/discovery exercised; not every registered-plugin surface |
 | Claude package | Native 2.1.263 validator passed without warnings | Passed structural validation |

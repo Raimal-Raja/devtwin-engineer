@@ -16,4 +16,4 @@ Example: a setup command refers to a missing runner filename and an unsupported 
 
 Failure case: the corrected local command succeeds while a documented remote deployment remains untested. Do not extend the success claim to that deployment.
 
-Expected output: source-backed discrepancies, focused corrections if requested, executed commands/outcomes, environment and remaining unverified instructions. Agent-level behavior remains unverified.
+Expected output: source-backed discrepancies, focused corrections if requested, executed commands/outcomes, environment and remaining unverified instructions. Broader independent and Claude evaluation remain pending.

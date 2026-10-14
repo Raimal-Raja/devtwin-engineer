@@ -77,6 +77,17 @@ def check(root):
     gates.append({'gate': 'package', 'passed': not errors, 'errors': errors})
     if errors:
         return {'passed': False, 'gates': gates}
+    if (root / 'evaluations/capabilities.json').is_file() or (root / 'backend').is_dir():
+        try:
+            sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+            from scripts.check_capabilities import check as check_capabilities
+            prerequisites = check_capabilities(root)
+            gates.append({'gate': 'capability_resources', 'passed': prerequisites['resources_ready'],
+                          'capabilities': len(prerequisites['capabilities']),
+                          'limitations': prerequisites['limitations']})
+        except (OSError, ValueError, KeyError, TypeError):
+            gates.append({'gate': 'capability_resources', 'passed': False,
+                          'error': 'Capability registry could not be validated'})
     command = [sys.executable, '-B', str(Path(__file__).resolve()), str(root), '--test-worker']
     worker = subprocess.run(command, cwd=root, capture_output=True, text=True,
                             encoding='utf-8', errors='replace', timeout=120)

@@ -16,4 +16,4 @@ Example: adding a NOT NULL status column without a default fails on populated SQ
 
 Failure case: a rollback drops a column containing new information. Schema rollback alone cannot recover that information.
 
-Expected output: concrete data/compatibility risks, source evidence, focused candidate if authorized, executed checks and explicit concurrency/recovery limits. Agent-level behavior remains unverified.
+Expected output: concrete data/compatibility risks, source evidence, focused candidate if authorized, executed checks and explicit concurrency/recovery limits. Broader independent and Claude evaluation remain pending.

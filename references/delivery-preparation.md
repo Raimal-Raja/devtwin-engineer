@@ -16,4 +16,4 @@ Example: prepare a private skill change for review with passing local tests and 
 
 Failure case: all local checks pass but clean-session activation and licensing are pending. Produce a reviewable result and an incomplete release-readiness assessment.
 
-Expected output: problem/result, focused scope, actual checks, unresolved risks/gates and authorized next actions. Use temporary reporting by default; do not add review files to every target repository. Agent-level behavior remains unverified.
+Expected output: problem/result, focused scope, actual checks, unresolved risks/gates and authorized next actions. Use temporary reporting by default; do not add review files to every target repository. Broader independent and Claude evaluation remain pending.

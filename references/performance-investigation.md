@@ -16,4 +16,4 @@ Example: repeatedly scanning sales for every requested product can be replaced w
 
 Failure case: aggregation processes rows that the old path never touched, potentially changing error behavior for malformed data. The validated-input assumption must be supported rather than invented for a real repair.
 
-Expected output: supported cost cause, baseline/profile evidence, candidate and correctness checks if authorized, raw measurements and limitations. Agent-level behavior remains unverified.
+Expected output: supported cost cause, baseline/profile evidence, candidate and correctness checks if authorized, raw measurements and limitations. Broader independent and Claude evaluation remain pending.

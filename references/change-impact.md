@@ -16,4 +16,4 @@ Example: renaming an invoice's `total` key affects both the receipt renderer and
 
 Failure case: a private external client reads the invoice dictionary. The local repository cannot prove that client compatibility; ask for relevant contract evidence if it is required for the task.
 
-Expected output: proposed behavior, known affected locations, inferred risks clearly labeled, focused checks, and remaining uncertainty. Agent-level evaluation of this draft remains pending.
+Expected output: proposed behavior, known affected locations, inferred risks clearly labeled, focused checks, and remaining uncertainty. Broader independent and Claude evaluation remain pending.

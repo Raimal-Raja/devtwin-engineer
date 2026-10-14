@@ -16,4 +16,4 @@ Example: explaining order submission should connect the service to invoice creat
 
 Failure case: a plugin can register a new renderer after startup; source for the default renderer does not establish the behavior of that plugin.
 
-Expected output: relevant behavior path, inputs/outputs and branches, source locations, actual checks, and unresolved boundaries. Agent-level evaluation of this draft remains pending.
+Expected output: relevant behavior path, inputs/outputs and branches, source locations, actual checks, and unresolved boundaries. Broader independent and Claude evaluation remain pending.
