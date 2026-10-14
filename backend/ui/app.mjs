@@ -2,9 +2,9 @@ const $=id=>document.getElementById(id);
 let archive='',previewSignature='',report=null,provider='',proposal=null;
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
-function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-patch').disabled=true;$('download-patch').disabled=true;}
+function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-run').checked=false;$('verification').textContent='No checks executed.';for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=true;}
 function invalidate(){previewSignature='';provider='';report=null;clearPatch();$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
-function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github'])$(id).disabled=busy;for(const id of ['preview','investigate','propose'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch'])$(id).disabled=busy||!proposal;}
+function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github'])$(id).disabled=busy;for(const id of ['preview','investigate','propose'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
 async function request(route,data){
   const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+$('token').value},body:JSON.stringify(data),cache:'no-store'});
   const result=await response.json();
@@ -61,4 +61,11 @@ $('download-patch').addEventListener('click',async()=>{
     const link=document.createElement('a');link.href=url;link.download='devtwin-selected-candidate.zip';link.click();URL.revokeObjectURL(url);
     $('status').textContent='Selected-file candidate exported. No tests ran and the original upload is unchanged.';
   }catch(error){$('status').textContent=error.message;}finally{lockInputs(false);$('download-patch').disabled=!proposal;$('approve-patch').disabled=!proposal;}
+});
+$('verify').addEventListener('click',async()=>{
+  if(!proposal||!$('approve-patch').checked||!$('approve-run').checked){$('status').textContent='Approve the reviewed patch and isolated execution before running checks.';return;}
+  lockInputs(true);$('status').textContent='Running original and candidate isolated checks…';$('verification').textContent='Verification pending.';
+  try{const result=await request('/api/verify',{archive,selected:selection(),patch:proposal.patch,approved:true,execution_approved:true});
+    $('verification').textContent=JSON.stringify(result,null,2);$('status').textContent=`Verification ${result.status}. Review actual scope and limitations.`;
+  }catch(error){$('verification').textContent='No successful verification report.';$('status').textContent=error.message;}finally{lockInputs(false);}
 });

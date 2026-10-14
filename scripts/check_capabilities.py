@@ -9,6 +9,7 @@ import shutil
 def check(root):
     root = Path(root).resolve()
     from backend.investigate import WORKFLOWS
+    from backend.runner import find_docker
     items = json.loads((root / 'evaluations/capabilities.json').read_text(encoding='utf-8'))
     if not isinstance(items, list) or {item['id'] for item in items} != WORKFLOWS or len(items) != 13:
         raise ValueError('Capability registry must contain each supported workflow exactly once')
@@ -31,7 +32,7 @@ def check(root):
                      'failure': item.get('failure')})
     return {'resources_ready': all(row['resources_ready'] for row in rows), 'capabilities': rows,
             'environment': {'codex_cli_available': shutil.which('codex') is not None,
-                            'docker_available': shutil.which('docker') is not None,
+                            'docker_available': find_docker() is not None,
                             'fastapi_available': importlib.util.find_spec('fastapi') is not None},
             'limitations': 'Resource presence is not runtime success. Claude execution, independent comparisons and web sandbox gates are separate.'}
 

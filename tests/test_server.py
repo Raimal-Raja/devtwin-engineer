@@ -23,8 +23,9 @@ class ServerTests(unittest.TestCase):
         self.propose = Mock(return_value={'status': 'unverified_patch_proposal'})
         self.import_repo = Mock(return_value={'repository': 'x/y', 'commit': 'a' * 40,
                                               'submitted_to_model': False, 'github_writes': False})
+        self.verify = Mock(return_value={'status': 'blocked', 'reason': 'Synthetic missing runner'})
         self.server = WorkspaceServer(0, 'a' * 32, analyze=self.analyze, propose_patch=self.propose,
-                                      import_repo=self.import_repo)
+                                      import_repo=self.import_repo, verify=self.verify)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
         self.addCleanup(self.close)
@@ -46,7 +47,7 @@ class ServerTests(unittest.TestCase):
             supplied = {'Origin': self.server.origin, 'Authorization': 'Bearer ' + 'a' * 32,
                         'Content-Type': 'application/json'}
             supplied.update(headers or {})
-            body = None if headers_only else json.dumps(self.data if data is None else data)
+            body = None if headers_only or method == 'GET' else json.dumps(self.data if data is None else data)
             connection.request(method, path, body, supplied)
             response = connection.getresponse()
             raw = response.read()
@@ -135,3 +136,38 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(self.call('/api/github', data)[0], 429)
         self.analyze.assert_not_called()
         self.propose.assert_not_called()
+
+    def test_verification_route_does_not_call_a_model(self):
+        data = {**self.data, 'patch': {}, 'approved': True, 'execution_approved': True}
+        for _ in range(2):
+            status, raw, _ = self.call('/api/verify', data)
+            self.assertEqual(status, 200)
+            self.assertEqual(json.loads(raw)['status'], 'blocked')
+        self.assertEqual(self.call('/api/verify', data)[0], 429)
+        self.assertEqual(self.verify.call_args.kwargs['execution_approved'], True)
+        self.analyze.assert_not_called()
+        self.propose.assert_not_called()
+
+    def test_private_worker_only_exposes_health_and_verification(self):
+        worker = WorkspaceServer(0, 'b' * 64, worker_only=True, verify=Mock(return_value={'status': 'blocked'}))
+        thread = threading.Thread(target=worker.serve_forever, daemon=True)
+        thread.start()
+        try:
+            connection = http.client.HTTPConnection('127.0.0.1', worker.server_port, timeout=3)
+            connection.request('GET', '/health', headers={'Host': worker.api_authority})
+            response = connection.getresponse()
+            self.assertEqual(response.status, 200)
+            response.read()
+            connection.close()
+            connection = http.client.HTTPConnection('127.0.0.1', worker.server_port, timeout=3)
+            connection.request('POST', '/api/propose', '{}', headers={
+                'Host': worker.api_authority, 'Origin': worker.origin, 'Authorization': 'Bearer ' + 'b' * 64,
+                'Content-Type': 'application/json'})
+            response = connection.getresponse()
+            self.assertEqual(response.status, 404)
+            response.read()
+            connection.close()
+        finally:
+            worker.shutdown()
+            worker.server_close()
+            thread.join(timeout=3)

@@ -1,0 +1,10 @@
+**
+!Dockerfile
+!.dockerignore
+!backend/
+!backend/**
+!references/
+!references/**
+**/__pycache__/
+**/*.pyc
+**/.env*

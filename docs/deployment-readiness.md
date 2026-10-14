@@ -10,8 +10,8 @@ The user asked to finish capability prerequisites before deployment, focus on Co
 | Internal browser investigation | Authenticated loopback API and UI | Production authentication, usage controls and hosting |
 | GitHub connection | Public commit-pinned selected-file import tested | Live private-token test only if needed; no write access required |
 | LLM provider | NVIDIA internal trial works; Groq/Gemini adapters simulated | Configure/verify a free-plan public-service-compatible provider securely |
-| Project execution | No hosted sandbox | Provide and validate isolated execution; Docker unavailable on this computer |
-| Repair/test agent loop | Investigation and patch proposal are separate calls | Connect evidence, candidate and actual isolated verification |
+| Project execution | Docker installed; live local app/worker repair verification passed | Local setup validated; production worker isolation remains unverified |
+| Repair/test agent loop | Investigation and patch proposal are separate calls | Local manual proposal/approval/verification connected; autonomous loop remains pending |
 | Claude | Explicitly deferred | Later authenticated runtime evaluation; not a Codex deployment blocker |
 | Formal distribution | License undecided, no release tag | User decision on licensing and review before formal release |
 

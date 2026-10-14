@@ -1,0 +1,61 @@
+services:
+  worker:
+    build:
+      context: .
+      target: worker
+      args:
+        PYTHON_IMAGE: ${DEVTWIN_RUNNER_IMAGE:?Configure the preloaded pinned Python image}
+        DOCKER_CLI_IMAGE: ${DEVTWIN_DOCKER_CLI_IMAGE:?Configure the pinned Docker CLI image}
+    environment:
+      DEVTWIN_WORKER_TOKEN: ${DEVTWIN_WORKER_TOKEN:?Configure the worker token}
+      DEVTWIN_RUNNER_IMAGE: ${DEVTWIN_RUNNER_IMAGE}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks: [worker_net]
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 96
+    mem_limit: 256m
+    cpus: 1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; r=urllib.request.Request('http://127.0.0.1:8766/health',headers={'Host':'worker:8766'}); urllib.request.urlopen(r,timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  app:
+    build:
+      context: .
+      target: app
+      args:
+        PYTHON_IMAGE: ${DEVTWIN_RUNNER_IMAGE:?Configure the pinned Python image}
+        DOCKER_CLI_IMAGE: ${DEVTWIN_DOCKER_CLI_IMAGE:?Configure the pinned Docker CLI image}
+    depends_on:
+      worker:
+        condition: service_healthy
+    ports: ["127.0.0.1:8765:8765"]
+    networks: [worker_net]
+    environment:
+      DEVTWIN_SESSION_TOKEN: ${DEVTWIN_SESSION_TOKEN:?Configure the workspace token}
+      DEVTWIN_WORKER_URL: http://worker:8766/api/verify
+      DEVTWIN_WORKER_TOKEN: ${DEVTWIN_WORKER_TOKEN}
+      DEVTWIN_PROVIDER: ${DEVTWIN_PROVIDER:-nvidia}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      DEVTWIN_GITHUB_TOKEN: ${DEVTWIN_GITHUB_TOKEN:-}
+    read_only: true
+    tmpfs: ["/tmp:size=16m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 64
+    mem_limit: 256m
+    cpus: 1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/',timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+networks:
+  worker_net:

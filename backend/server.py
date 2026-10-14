@@ -14,6 +14,7 @@ from .nvidia import ProviderError
 from .providers import provider_info
 from .patches import export_candidate, propose
 from .github import GithubError, import_repository
+from .runner import verify_candidate, verify_dispatch
 from .workspace import WorkspaceError, ingest_zip
 
 UI = Path(__file__).parent / 'ui'
@@ -21,14 +22,20 @@ MAX_BODY = 3 * 1024 * 1024
 
 
 class WorkspaceServer(HTTPServer):
-    def __init__(self, port, token, *, analyze=investigate, propose_patch=propose, import_repo=import_repository):
+    def __init__(self, port, token, *, analyze=investigate, propose_patch=propose, import_repo=import_repository,
+                 verify=verify_dispatch, listen='127.0.0.1', worker_only=False):
         if not isinstance(token, str) or len(token) < 32 or not token.isascii() or not token.isalnum():
             raise ValueError('DEVTWIN_SESSION_TOKEN must contain at least 32 ASCII letters/digits')
         self.token, self.analyze, self.calls = token, analyze, []
         self.propose_patch = propose_patch
         self.import_repo, self.import_calls = import_repo, []
-        super().__init__(('127.0.0.1', port), Handler)
-        self.origin = 'http://127.0.0.1:' + str(self.server_port)
+        self.verify, self.verification_calls = verify, []
+        if listen not in ('127.0.0.1', '0.0.0.0'):
+            raise ValueError('Unsupported listen address')
+        self.worker_only = worker_only
+        super().__init__((listen, port), Handler)
+        self.api_authority = ('worker:' if worker_only else '127.0.0.1:') + str(self.server_port)
+        self.origin = 'http://' + self.api_authority
 
     def get_request(self):
         connection, address = super().get_request()
@@ -66,11 +73,13 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(raw)
 
     def allowed_host(self):
-        return self.headers.get('Host') == '127.0.0.1:' + str(self.server.server_port)
+        return self.headers.get('Host') == self.server.api_authority
 
     def do_GET(self):
         if not self.allowed_host():
             return self.reply(403, {'error': 'Host rejected'})
+        if self.server.worker_only:
+            return self.reply(200, {'ready': True}) if self.path == '/health' else self.reply(404, {'error': 'Not found'})
         assets = {'/': ('index.html', 'text/html; charset=utf-8'),
                   '/app.mjs': ('app.mjs', 'text/javascript; charset=utf-8'),
                   '/style.css': ('style.css', 'text/css; charset=utf-8')}
@@ -85,7 +94,8 @@ class Handler(BaseHTTPRequestHandler):
         supplied = self.headers.get('Authorization', '')
         if not hmac.compare_digest(supplied.encode(), ('Bearer ' + self.server.token).encode()):
             return self.reply(401, {'error': 'Workspace authentication required'})
-        if self.path not in ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github'):
+        routes = ('/api/verify',) if self.server.worker_only else ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github', '/api/verify')
+        if self.path not in routes:
             return self.reply(404, {'error': 'Not found'})
         if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
             return self.reply(415, {'error': 'Use a length-delimited JSON request'})
@@ -122,6 +132,14 @@ class Handler(BaseHTTPRequestHandler):
                                                       approved=data.get('approved'))
                 return self.reply(200, {'archive': base64.b64encode(candidate).decode(), 'files': hashes,
                                        'scope': 'selected files only', 'tests_executed': False})
+            if self.path == '/api/verify':
+                now = time.monotonic()
+                self.server.verification_calls = [stamp for stamp in self.server.verification_calls if now - stamp < 60]
+                if len(self.server.verification_calls) >= 2:
+                    return self.reply(429, {'error': 'Verification limit reached; wait before retrying'})
+                self.server.verification_calls.append(now)
+                return self.reply(200, self.server.verify(archive, data['selected'], data.get('patch'),
+                                  approved=data.get('approved'), execution_approved=data.get('execution_approved')))
             if data.get('consent') is not True:
                 return self.reply(400, {'error': 'Approve submission of nonconfidential selected files first'})
             if data.get('provider') != provider_info()['id']:
@@ -149,11 +167,15 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=8765)
+    parser.add_argument('--listen', choices=('127.0.0.1', '0.0.0.0'), default='127.0.0.1')
+    parser.add_argument('--worker', action='store_true', help='Private verification-only worker; no model routes or UI')
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error('Port must be between 1 and 65535')
     try:
-        server = WorkspaceServer(args.port, os.environ.get('DEVTWIN_SESSION_TOKEN', ''))
+        token_name = 'DEVTWIN_WORKER_TOKEN' if args.worker else 'DEVTWIN_SESSION_TOKEN'
+        server = WorkspaceServer(args.port, os.environ.get(token_name, ''), listen=args.listen,
+                                 worker_only=args.worker, verify=verify_candidate if args.worker else verify_dispatch)
     except (ValueError, OSError):
         parser.error('Configure a valid DEVTWIN_SESSION_TOKEN and an available port')
     print('Internal workspace: ' + server.origin, flush=True)
