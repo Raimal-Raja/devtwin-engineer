@@ -16,7 +16,7 @@ Preparation records the actual downloaded repository digests and creates separat
 
 Only the app publishes a port, bound to 127.0.0.1. The worker has no published port and accepts only authenticated verification requests. The worker mounts the Docker daemon socket and therefore has substantial authority over that daemon: run this arrangement on a dedicated development engine, never as an audited public multi-user sandbox. The app and project test containers have no daemon socket. Test jobs have no network, host source mounts or provider credentials, and use a pinned preloaded Python image with process, output, time and resource limits.
 
-Select a small Python project and its standard-library unittest files, preview it, request a focused patch, review the replacement, and separately approve execution. Original and candidate tests run in different disposable containers. Existing selected tests are preserved on export. Other languages, dependency installation and autonomous repeated repairs are not implemented by this runner.
+Select a small Python project and its standard-library unittest files, preview it, request a focused patch, review the replacement, and separately approve execution. Original and candidate tests run in different disposable containers. Existing selected tests are preserved on export. Other languages, dependency installation are not implemented by this runner. The app also supports an explicitly approved bounded repair loop; see [repair loop](repair-loop.md).
 
 ```powershell
 docker compose --env-file .env.docker -p devtwin-engineer ps

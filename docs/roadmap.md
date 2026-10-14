@@ -15,8 +15,8 @@ Implemented and exercised:
 
 Before deploying the complete browser agent:
 
-1. Supply and validate isolated execution; Docker is unavailable in the current host.
-2. Connect investigation, candidate review and actual isolated checks into a bounded repair loop.
+1. Local Docker execution is validated; broader production containment remains pending.
+2. The local bounded repair loop is connected and live-tested; see repair-loop.md.
 3. Configure and live-test a selected free-plan provider through backend secrets; Groq/Gemini keys remain absent.
 4. Prepare production authentication, jobs/usage limits, privacy controls and suitable free hosting.
 5. Validate deployment gates, preserve existing public website access and refresh development downloads.

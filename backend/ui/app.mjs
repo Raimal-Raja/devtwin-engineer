@@ -3,8 +3,8 @@ let archive='',previewSignature='',report=null,provider='',proposal=null;
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
 function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-run').checked=false;$('verification').textContent='No checks executed.';for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=true;}
-function invalidate(){previewSignature='';provider='';report=null;clearPatch();$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
-function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github'])$(id).disabled=busy;for(const id of ['preview','investigate','propose'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
+function invalidate(){previewSignature='';provider='';report=null;clearPatch();$('approve-loop').checked=false;$('repair-result').textContent='No repair loop executed.';$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('repair').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
+function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','approve-loop'])$(id).disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
 async function request(route,data){
   const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+$('token').value},body:JSON.stringify(data),cache:'no-store'});
   const result=await response.json();
@@ -68,4 +68,14 @@ $('verify').addEventListener('click',async()=>{
   try{const result=await request('/api/verify',{archive,selected:selection(),patch:proposal.patch,approved:true,execution_approved:true});
     $('verification').textContent=JSON.stringify(result,null,2);$('status').textContent=`Verification ${result.status}. Review actual scope and limitations.`;
   }catch(error){$('verification').textContent='No successful verification report.';$('status').textContent=error.message;}finally{lockInputs(false);}
+});
+$('repair').addEventListener('click',async()=>{
+  if(previewSignature!==signature()||!$('consent').checked||!$('approve-loop').checked){$('status').textContent='Preview files and approve provider submission and the bounded repair loop first.';return;}
+  clearPatch();lockInputs(true);$('export').disabled=true;$('status').textContent='Running bounded investigation, candidate generation and isolated checks…';$('repair-result').textContent='Repair pending.';
+  try{const result=await request('/api/repair',{archive,selected:selection(),task:$('task').value,workflow:$('workflow').value,consent:true,provider,loop_approved:true});
+    report=result;$('repair-result').textContent=JSON.stringify(result,null,2);$('export').disabled=false;
+    const last=result.attempts?.at(-1);
+    if(last&&result.patch){proposal=last.proposal;$('patch').textContent=`${proposal.explanation}\n\n${proposal.diff}\n\nComplete replacement for ${proposal.patch.path}:\n${proposal.patch.replacement}`;$('verification').textContent=JSON.stringify(last.verification,null,2);}
+    $('status').textContent=`Repair ${result.status}. Review the evidence and final replacement before export.`;
+  }catch(error){$('repair-result').textContent='No successful repair report.';$('status').textContent=error.message;}finally{lockInputs(false);}
 });

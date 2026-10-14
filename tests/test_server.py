@@ -63,6 +63,19 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(headers['Cache-Control'], 'no-store')
         self.analyze.assert_not_called()
 
+    def test_repair_requires_consent_and_reserves_bounded_budgets(self):
+        self.assertEqual(self.call('/api/repair', self.data)[0], 400)
+        self.analyze.assert_not_called()
+        self.propose.return_value = {'patch': {'path': 'a.py',
+            'base_sha256': hashlib.sha256(b'pass\n').hexdigest(), 'replacement': 'value = 1\n'}}
+        status, raw, _ = self.call('/api/repair', {**self.data, 'loop_approved': True})
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(raw)['status'], 'blocked')
+        self.assertEqual(len(self.server.calls), 3)
+        self.assertEqual(len(self.server.verification_calls), 2)
+        self.assertEqual(self.call('/api/repair', {**self.data, 'loop_approved': True})[0], 429)
+        self.analyze.assert_called_once()
+
     def test_auth_origin_and_host_reject_before_provider(self):
         for headers, expected in (({'Authorization': 'Bearer invalid'}, 401),
                                   ({'Origin': 'https://evil.example'}, 403),

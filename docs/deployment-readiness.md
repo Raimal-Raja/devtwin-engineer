@@ -11,10 +11,12 @@ The user asked to finish capability prerequisites before deployment, focus on Co
 | GitHub connection | Public commit-pinned selected-file import tested | Live private-token test only if needed; no write access required |
 | LLM provider | NVIDIA internal trial works; Groq/Gemini adapters simulated | Configure/verify a free-plan public-service-compatible provider securely |
 | Project execution | Docker installed; live local app/worker repair verification passed | Local setup validated; production worker isolation remains unverified |
-| Repair/test agent loop | Investigation and patch proposal are separate calls | Local manual proposal/approval/verification connected; autonomous loop remains pending |
+| Repair/test agent loop | Investigation and patch proposal are separate calls | Bounded local investigation/proposal/test/retry loop passed; public jobs remain pending |
 | Claude | Explicitly deferred | Later authenticated runtime evaluation; not a Codex deployment blocker |
 | Formal distribution | License undecided, no release tag | User decision on licensing and review before formal release |
 
 Do not deploy the loopback development server through a tunnel as a production backend. The deployment target needs authenticated jobs, bounded per-user and total usage, protected environment credentials, repository-scope consent, isolated workers and honest evidence/status reporting. Free LLM plans do not provide arbitrary repository execution infrastructure.
 
 No paid billing or compute is enabled. The next deployment must use confirmed free allowances or user-provided resources, stop on quotas and preserve the existing website audience. A published static UI alone must not be described as a working full agent.
+
+See [free hosting prerequisites](free-hosting.md). The operator has no free cloud account yet; Claude remains excluded from current completion work.

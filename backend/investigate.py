@@ -30,13 +30,20 @@ def investigate(archive, selected, task, workflow, *, send=complete):
                 'claim runtime verification. Return only JSON with keys summary (string), '
                 'findings (list of {path, line, explanation}), proposed_checks (list of strings), '
                 'limitations (list of strings). Cite only existing supplied source lines. '
+                'Use a single integer line, never a range, for each finding; no additional keys or Markdown fences. '
+                'Source lines are explicitly numbered as N | text; cite those exact N values within line_count. '
                 'Describe changes as proposals; never claim they were applied.\n')
+    evidence = [{'path': file['path'], 'sha256': file['sha256'],
+                 'line_count': len(file['content'].splitlines()),
+                 'numbered_source': '\n'.join(f'{number} | {line}' for number, line in
+                                             enumerate(file['content'].splitlines(), 1))}
+                for file in files]
     payload = {'task': task, 'workflow': workflow, 'reference_guidance': reference,
-               'source_evidence': files}
+               'source_evidence': evidence}
     prompt = guidance + json.dumps(payload, ensure_ascii=False)
     if len(prompt.encode('utf-8')) > 32000:
         raise WorkspaceError('Encoded request exceeds provider input limit; select fewer files')
-    response = send(prompt, max_tokens=2048)
+    response = send(prompt, max_tokens=2048, json_mode=True)
     try:
         result = json.loads(response['content'])
         if not isinstance(result, dict) or set(result) != {'summary', 'findings', 'proposed_checks', 'limitations'}:

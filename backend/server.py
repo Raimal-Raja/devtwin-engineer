@@ -15,6 +15,7 @@ from .providers import provider_info
 from .patches import export_candidate, propose
 from .github import GithubError, import_repository
 from .runner import verify_candidate, verify_dispatch
+from .repair import repair
 from .workspace import WorkspaceError, ingest_zip
 
 UI = Path(__file__).parent / 'ui'
@@ -94,7 +95,7 @@ class Handler(BaseHTTPRequestHandler):
         supplied = self.headers.get('Authorization', '')
         if not hmac.compare_digest(supplied.encode(), ('Bearer ' + self.server.token).encode()):
             return self.reply(401, {'error': 'Workspace authentication required'})
-        routes = ('/api/verify',) if self.server.worker_only else ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github', '/api/verify')
+        routes = ('/api/verify',) if self.server.worker_only else ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github', '/api/verify', '/api/repair')
         if self.path not in routes:
             return self.reply(404, {'error': 'Not found'})
         if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
@@ -146,9 +147,21 @@ class Handler(BaseHTTPRequestHandler):
                 return self.reply(400, {'error': 'Preview and approve the current provider before submission'})
             now = time.monotonic()
             self.server.calls = [stamp for stamp in self.server.calls if now - stamp < 60]
-            if len(self.server.calls) >= 5:
+            budget = 3 if self.path == '/api/repair' else 1
+            if len(self.server.calls) + budget > 5:
                 return self.reply(429, {'error': 'Workspace limit reached; wait before another investigation'})
-            self.server.calls.append(now)
+            if self.path == '/api/repair':
+                if data.get('loop_approved') is not True:
+                    raise WorkspaceError('Approve the bounded repair loop first')
+                self.server.verification_calls = [stamp for stamp in self.server.verification_calls if now - stamp < 60]
+                if self.server.verification_calls:
+                    return self.reply(429, {'error': 'Wait before reserving two isolated verification attempts'})
+                self.server.verification_calls.extend([now, now])
+            self.server.calls.extend([now] * budget)
+            if self.path == '/api/repair':
+                return self.reply(200, repair(archive, data['selected'], data.get('task'), data.get('workflow'),
+                                  loop_approved=True, analyze=self.server.analyze,
+                                  propose_patch=self.server.propose_patch, verify=self.server.verify))
             if self.path == '/api/propose':
                 result = self.server.propose_patch(archive, data['selected'], data.get('task'))
             else:

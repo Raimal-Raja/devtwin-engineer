@@ -34,7 +34,7 @@ class NvidiaTests(unittest.TestCase):
 
     def test_invalid_configuration_never_calls_network(self):
         with patch.object(nvidia, 'build_opener') as factory:
-            for kwargs in ({'max_tokens': 9000}, {'timeout': 0}, {'thinking': 'yes'}):
+            for kwargs in ({'max_tokens': 9000}, {'timeout': 0}, {'thinking': 'yes'}, {'json_mode': 'yes'}):
                 with self.assertRaises(nvidia.ProviderError):
                     nvidia.complete('task', **kwargs)
             for prompt in ('', 'x' * 32001):
@@ -44,6 +44,14 @@ class NvidiaTests(unittest.TestCase):
                 with self.assertRaises(nvidia.ProviderError):
                     nvidia.complete('task')
             factory.assert_not_called()
+
+    def test_structured_requests_select_json_mode(self):
+        with patch.object(nvidia, 'build_opener') as factory:
+            factory.return_value.open.return_value = self.response('{}')
+            nvidia.complete('Return JSON for this synthetic task', json_mode=True)
+            body = json.loads(factory.return_value.open.call_args.args[0].data)
+            self.assertEqual(body['response_format'], {'type': 'json_object'})
+            self.assertFalse(body['chat_template_kwargs']['enable_thinking'])
 
     def test_http_errors_do_not_echo_bodies_or_retry(self):
         for status in (302, 401, 403, 429, 500):

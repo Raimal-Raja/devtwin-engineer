@@ -22,7 +22,7 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def complete(prompt, *, max_tokens=512, timeout=60, thinking=False):
+def complete(prompt, *, max_tokens=512, timeout=60, thinking=False, json_mode=False):
     """One request, fixed host/model, bounded input/output, no automatic retries."""
     key = os.environ.get('NVIDIA_API_KEY', '').strip()
     if not key or '\r' in key or '\n' in key:
@@ -35,9 +35,13 @@ def complete(prompt, *, max_tokens=512, timeout=60, thinking=False):
         raise ProviderError('timeout must be between 1 and 120 seconds')
     if type(thinking) is not bool:
         raise ProviderError('thinking must be boolean')
+    if type(json_mode) is not bool:
+        raise ProviderError('json_mode must be boolean')
     body = {'model': MODEL, 'messages': [{'role': 'user', 'content': prompt}],
             'temperature': 0.2, 'top_p': 0.95, 'max_tokens': max_tokens,
             'stream': False, 'chat_template_kwargs': {'enable_thinking': thinking}}
+    if json_mode:
+        body['response_format'] = {'type': 'json_object'}
     request = Request(ENDPOINT, data=json.dumps(body).encode('utf-8'), method='POST',
                       headers={'Authorization': 'Bearer ' + key,
                                'Content-Type': 'application/json', 'Accept': 'application/json'})

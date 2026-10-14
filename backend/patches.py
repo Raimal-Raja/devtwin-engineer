@@ -53,7 +53,7 @@ def propose(archive, selected, task, *, send=complete):
     prompt += json.dumps({'task': task, 'guidance': guidance, 'files': files}, ensure_ascii=False)
     if len(prompt.encode('utf-8')) > 32000:
         raise WorkspaceError('Encoded request exceeds provider limit; select fewer files')
-    response = send(prompt, max_tokens=2048)
+    response = send(prompt, max_tokens=2048, json_mode=True)
     try:
         result = json.loads(response['content'])
         if (not isinstance(result, dict) or set(result) != {'path', 'replacement', 'explanation'}

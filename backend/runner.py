@@ -205,6 +205,27 @@ def verify_dispatch(archive, selected, patch, *, approved=False, execution_appro
         result = json.loads(raw)
         if not isinstance(result, dict) or result.get('status') not in ('passed', 'failed', 'blocked'):
             raise ValueError()
+        if result['status'] != 'blocked':
+            # A transport success or bare status is not evidence of test execution.
+            for key in ('baseline', 'candidate'):
+                report = result.get(key)
+                if not isinstance(report, dict) or report.get('status') not in ('passed', 'failed'):
+                    raise ValueError()
+                counts = [report.get(name) for name in ('tests_run', 'skipped', 'failures', 'errors')]
+                if (any(type(value) is not int or value < 0 for value in counts)
+                        or counts[0] <= counts[1] or counts[2] + counts[3] > counts[0]
+                        or type(report.get('passed')) is not bool
+                        or type(report.get('exit_code')) is not int or report['exit_code'] not in (0, 1)
+                        or not isinstance(report.get('log'), str) or len(report['log']) > 8000):
+                    raise ValueError()
+                passed = report['exit_code'] == 0 and counts[2] == counts[3] == 0 and report['passed']
+                if (report['status'] == 'passed') != passed:
+                    raise ValueError()
+            if result['status'] != result['candidate']['status']:
+                raise ValueError()
+            resolved = result['baseline']['status'] == 'failed' and result['candidate']['status'] == 'passed'
+            if type(result.get('observed_failure_resolved')) is not bool or result['observed_failure_resolved'] != resolved:
+                raise ValueError()
         return result
     except (HTTPError, URLError, OSError, TimeoutError, ValueError, UnicodeError):
         return {'status': 'blocked', 'reason': 'Local worker unavailable or returned an invalid report', 'executed_checks': []}

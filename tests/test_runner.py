@@ -117,6 +117,22 @@ class RunnerTests(unittest.TestCase):
             with self.assertRaises(WorkspaceError):
                 verify_dispatch(self.archive, self.selected, self.patch, approved=True, execution_approved=True)
             factory.assert_not_called()
+
         with patch.dict(os.environ, {'DEVTWIN_WORKER_URL': 'http://worker:8766/api/verify'}):
             with self.assertRaises(WorkspaceError):
                 verify_dispatch(self.archive, self.selected, self.patch)
+
+    def test_worker_cannot_claim_pass_without_executed_test_evidence(self):
+        env = {'DEVTWIN_WORKER_URL': 'http://worker:8766/api/verify', 'DEVTWIN_WORKER_TOKEN': 'b' * 64}
+        report = {'status': 'passed', 'tests_run': 1, 'skipped': 0, 'failures': 0,
+                  'errors': 0, 'passed': True, 'exit_code': 0, 'log': 'synthetic'}
+        valid = {'status': 'passed', 'baseline': report, 'candidate': report,
+                 'observed_failure_resolved': False}
+        for answer, expected in (({'status': 'passed'}, 'blocked'),
+                                 ({**valid, 'observed_failure_resolved': True}, 'blocked'),
+                                 ({**valid, 'candidate': {**report, 'skipped': 1}}, 'blocked'),
+                                 (valid, 'passed')):
+            with patch.dict(os.environ, env), patch('backend.runner.build_opener') as factory:
+                factory.return_value.open.return_value = io.BytesIO(json.dumps(answer).encode())
+                result = verify_dispatch(self.archive, self.selected, self.patch, approved=True, execution_approved=True)
+                self.assertEqual(result['status'], expected)

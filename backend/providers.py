@@ -33,17 +33,17 @@ def provider_info():
             'notice': config['notice'], 'configured': bool(os.environ.get(config['key'], '').strip())}
 
 
-def complete(prompt, *, max_tokens=512, timeout=60):
+def complete(prompt, *, max_tokens=512, timeout=60, json_mode=False):
     provider = selected_provider()
     if provider == 'nvidia':
-        return {'provider': provider, **nvidia.complete(prompt, max_tokens=max_tokens, timeout=timeout)}
+        return {'provider': provider, **nvidia.complete(prompt, max_tokens=max_tokens, timeout=timeout, json_mode=json_mode)}
     config = PROVIDERS[provider]
     key = os.environ.get(config['key'], '').strip()
     if not key or not key.isascii() or any(ord(char) < 33 for char in key):
         raise ProviderError('Configure a valid ' + config['key'] + ' in the backend environment')
     if (not isinstance(prompt, str) or not prompt.strip() or len(prompt.encode('utf-8')) > 32000
             or type(max_tokens) is not int or not 1 <= max_tokens <= 2048
-            or type(timeout) not in (int, float) or not 1 <= timeout <= 120):
+            or type(timeout) not in (int, float) or not 1 <= timeout <= 120 or type(json_mode) is not bool):
         raise ProviderError('Invalid provider prompt, token limit or timeout')
     headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
     if provider == 'groq':
@@ -51,11 +51,15 @@ def complete(prompt, *, max_tokens=512, timeout=60):
         headers['Authorization'] = 'Bearer ' + key
         body = {'model': config['model'], 'messages': [{'role': 'user', 'content': prompt}],
                 'temperature': 0.2, 'max_completion_tokens': max_tokens, 'stream': False}
+        if json_mode:
+            body['response_format'] = {'type': 'json_object'}
     else:
         endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/' + config['model'] + ':generateContent'
         headers['x-goog-api-key'] = key
         body = {'contents': [{'role': 'user', 'parts': [{'text': prompt}]}],
                 'generationConfig': {'temperature': 0.2, 'maxOutputTokens': max_tokens}}
+        if json_mode:
+            body['generationConfig']['responseMimeType'] = 'application/json'
     request = Request(endpoint, data=json.dumps(body).encode(), headers=headers, method='POST')
     try:
         with build_opener(NoRedirect()).open(request, timeout=timeout) as response:

@@ -26,3 +26,5 @@ Run all local development gates with `python scripts/check_project.py .`; the JS
 Python 3.10+ is required; core local checks use no third-party dependencies. The [optional FastAPI fixture](docs/fastapi-evaluation.md) needs its isolated dependency environment and is skipped when unavailable. Deliberately broken fixtures are copied to temporary directories for checks. Agent execution may incur runtime costs. Claude execution, independent benchmarks, licensing and formal release remain pending. The web dashboard is live with public access confirmed by the user.
 
 Run the standalone app locally with the [Dockerized app and private verification worker](docs/docker.md). The local repair flow has passed real original/candidate Python tests; the public catalog is separate from this backend.
+
+The local [bounded repair loop](docs/repair-loop.md) connects investigation, proposal, isolated checks and one failure-driven retry. [Free hosting prerequisites](docs/free-hosting.md) track the remaining hosted-service requirements.

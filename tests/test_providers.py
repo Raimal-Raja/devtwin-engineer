@@ -53,10 +53,21 @@ class ProviderTests(unittest.TestCase):
                 with self.assertRaises(providers.ProviderError):
                     providers.complete('test')
             for prompt, kwargs in (('', {}), ('x' * 32001, {}), ('test', {'max_tokens': 9999}),
-                                   ('test', {'timeout': float('nan')})):
+                                   ('test', {'timeout': float('nan')}), ('test', {'json_mode': 'yes'})):
                 with self.assertRaises(providers.ProviderError):
                     providers.complete(prompt, **kwargs)
             factory.assert_not_called()
+
+    def test_provider_structured_output_modes(self):
+        for provider, answer in (('groq', self.groq()), ('gemini', self.gemini())):
+            with patch.dict(os.environ, {'DEVTWIN_PROVIDER': provider}), patch.object(providers, 'build_opener') as factory:
+                factory.return_value.open.return_value = io.BytesIO(json.dumps(answer).encode())
+                providers.complete('Return JSON', json_mode=True)
+                body = json.loads(factory.return_value.open.call_args.args[0].data)
+                if provider == 'groq':
+                    self.assertEqual(body['response_format'], {'type': 'json_object'})
+                else:
+                    self.assertEqual(body['generationConfig']['responseMimeType'], 'application/json')
 
     def test_http_quota_stops_without_fallback(self):
         with patch.object(providers, 'build_opener') as factory, patch.object(providers.nvidia, 'complete') as fallback:
