@@ -5,6 +5,7 @@ import binascii
 import hmac
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import math
 import os
 from pathlib import Path
 import time
@@ -30,6 +31,7 @@ class WorkspaceServer(HTTPServer):
         self.token, self.analyze, self.calls = token, analyze, []
         self.propose_patch = propose_patch
         self.import_repo, self.import_calls = import_repo, []
+        self.browse_calls = []
         self.list_repo = list_repo
         self.verify, self.verification_calls = verify, []
         if listen not in ('127.0.0.1', '0.0.0.0'):
@@ -118,10 +120,17 @@ class Handler(BaseHTTPRequestHandler):
                 if not isinstance(data, dict):
                     raise ValueError()
                 now = time.monotonic()
-                self.server.import_calls = [stamp for stamp in self.server.import_calls if now - stamp < 60]
-                if len(self.server.import_calls) >= 2:
-                    return self.reply(429, {'error': 'GitHub import limit reached; wait before importing again'})
-                self.server.import_calls.append(now)
+                browsing = self.path.endswith('/tree')
+                bucket = 'browse_calls' if browsing else 'import_calls'
+                limit = 6 if browsing else 4
+                calls = [stamp for stamp in getattr(self.server, bucket) if now - stamp < 60]
+                setattr(self.server, bucket, calls)
+                if len(calls) >= limit:
+                    seconds = max(1, math.ceil(60 - (now - calls[0])))
+                    action = 'browse' if browsing else 'import'
+                    return self.reply(429, {'error': f'GitHub {action} limit reached; try again in {seconds} seconds',
+                                            'retry_after_seconds': seconds})
+                calls.append(now)
                 try:
                     result = (self.server.list_repo(data.get('repository'), data.get('ref')) if self.path.endswith('/tree')
                               else self.server.import_repo(data.get('repository'), data.get('ref'), data.get('selected')))

@@ -162,13 +162,25 @@ class ServerTests(unittest.TestCase):
         data = {'repository': 'x/y', 'ref': 'main', 'selected': ['a.py']}
         self.assertEqual(self.call('/api/github', data, headers={'Authorization': 'bad'})[0], 401)
         self.import_repo.assert_not_called()
-        for _ in range(2):
+        for _ in range(4):
             status, raw, _ = self.call('/api/github', data)
             self.assertEqual(status, 200)
             self.assertFalse(json.loads(raw)['submitted_to_model'])
         self.assertEqual(self.call('/api/github', data)[0], 429)
         self.analyze.assert_not_called()
         self.propose.assert_not_called()
+
+    def test_github_browsing_has_separate_budget_and_expiring_wait(self):
+        data = {'repository': 'x/y', 'selected': ['a.py']}
+        with patch('backend.server.time.monotonic', return_value=100):
+            for _ in range(6):
+                self.assertEqual(self.call('/api/github/tree', data)[0], 200)
+            status, raw, _ = self.call('/api/github/tree', data)
+            self.assertEqual(status, 429)
+            self.assertEqual(json.loads(raw)['retry_after_seconds'], 60)
+            self.assertEqual(self.call('/api/github', data)[0], 200)
+        with patch('backend.server.time.monotonic', return_value=161):
+            self.assertEqual(self.call('/api/github/tree', data)[0], 200)
 
     def test_verification_route_does_not_call_a_model(self):
         data = {**self.data, 'patch': {}, 'approved': True, 'execution_approved': True}
