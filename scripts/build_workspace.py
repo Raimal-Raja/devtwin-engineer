@@ -7,7 +7,7 @@ import zipfile
 
 BACKEND = ('__init__.py', 'discovery.py', 'github.py', 'investigate.py', 'nvidia.py', 'patches.py',
            'providers.py', 'repair.py', 'runner.py', 'server.py', 'workspace.py',
-           'ui/app.mjs', 'ui/github.mjs', 'ui/index.html', 'ui/style.css')
+           'ui/app.mjs', 'ui/github.mjs', 'ui/batch.mjs', 'ui/shell.mjs', 'ui/portrait.jpg', 'ui/index.html', 'ui/style.css')
 REFERENCES = ('api-compatibility', 'bug-reproduction', 'change-impact', 'database-review',
               'delivery-preparation', 'dependency-diagnosis', 'documentation-verification',
               'feature-tracing', 'implementation', 'performance-investigation',
@@ -40,7 +40,7 @@ def build(root, output):
             data = stream.read(1048577)
         if len(data) > 1048576:
             raise ValueError('Workspace resource exceeds size limit')
-        payloads[name] = data.decode('utf-8').replace('\r\n', '\n').encode()
+        payloads[name] = data if name.endswith('.jpg') else data.decode('utf-8').replace('\r\n', '\n').encode()
     manifest = {name: {'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
                 for name, data in sorted(payloads.items())}
     payloads['manifest.json'] = json.dumps({'schema': 1, 'files': manifest,

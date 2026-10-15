@@ -1,14 +1,17 @@
-import {sessionToken,githubInput} from '/github.mjs';
+import {sessionToken,githubInput} from '/github.mjs'; import {runBatch,workflows as allWorkflows} from '/batch.mjs';
 const $=id=>document.getElementById(id);
 let githubSnapshot=null;
+let batchReport=null,batchStop=false;
+function emit(name,detail){document.dispatchEvent?.(new CustomEvent(name,{detail}));}
+function resetBatch(){emit('batch-reset');batchReport=null;$('download-all').disabled=true;$('approve-batch').checked=false;$('batch-progress').value=0;$('batch-status').textContent='Preview files and approve provider submission to begin.';}
 let archive='',previewSignature='',report=null,provider='',proposal=null,publicInputRequired=false;
 let runnableSelection=false;
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
 function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-run').checked=false;$('verification').textContent='No checks executed.';for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=true;}
-function clearResults(){report=null;clearPatch();$('result').textContent='No current report.';$('repair-result').textContent='No repair loop executed.';$('export').disabled=true;$('approve-loop').checked=false;}
-function invalidate(){previewSignature='';provider='';publicInputRequired=false;report=null;clearPatch();$('approve-loop').checked=false;$('repair-result').textContent='No repair loop executed.';$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('repair').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
-function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','github-browse','approve-loop'])$(id).disabled=busy;for(const item of $('github-list').querySelectorAll('input'))item.disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;$('workflow').disabled=busy||!previewSignature;$('repair').disabled=busy||!previewSignature||!runnableSelection;$('verify').disabled=busy||!proposal||!runnableSelection;}
+function clearResults(){resetBatch();report=null;clearPatch();$('result').textContent='No current report.';$('repair-result').textContent='No repair loop executed.';$('export').disabled=true;$('approve-loop').checked=false;}
+function invalidate(){resetBatch();runnableSelection=false;emit('selection-invalidated');previewSignature='';provider='';publicInputRequired=false;report=null;clearPatch();$('approve-loop').checked=false;$('repair-result').textContent='No repair loop executed.';$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('repair').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
+function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','github-browse','approve-loop'])$(id).disabled=busy;for(const item of $('github-list').querySelectorAll('input'))item.disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;$('workflow').disabled=busy||!previewSignature;$('repair').disabled=busy||!previewSignature||!runnableSelection;$('verify').disabled=busy||!proposal||!runnableSelection;$('run-all').disabled=busy||!previewSignature;$('approve-batch').disabled=busy;}
 async function request(route,data){
   const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionToken($('token').value)},body:JSON.stringify(data),cache:'no-store'});
   const result=await response.json();
@@ -50,6 +53,7 @@ $('preview').addEventListener('click',async()=>{
     $('workflow').replaceChildren(...result.workflows.map(value=>{const option=document.createElement('option');option.value=value;option.textContent=value.replaceAll('-',' ');return option;}));
     provider=result.provider.id;publicInputRequired=result.provider.public_input_required===true;$('provider-details').textContent=`${result.provider.name} · ${result.provider.model}. ${result.provider.notice} ${result.provider.configured?'':'API key is not configured.'}`;
     $('provider-consent').textContent=(publicInputRequired?'I confirm these files and my task are public or synthetic, and approve upstream storage/training. ':'')+`I approve sending these selected, nonconfidential files and my task to ${result.provider.name} under the policy shown above.`;
+    emit('preview-ready',result);
     runnableSelection=result.files.some(file=>/(^|\/)test[^/]*\.py$/.test(file.path));
     $('runner-readiness').textContent=runnableSelection?'Selected Python test modules found. Actual discovery, dependencies and results are checked only inside Docker.':'No Python test modules selected. Investigation and proposals are available; isolated verification and repair need test*.py unittest files and their source dependencies. Documentation alone cannot verify an application.';
     $('workflow').disabled=false;previewSignature=current;$('investigate').disabled=false;$('propose').disabled=false;$('status').textContent='Preview ready. Nothing has been sent to the model.';
@@ -101,4 +105,28 @@ $('repair').addEventListener('click',async()=>{
     if(last&&result.patch){proposal=last.proposal;$('patch').textContent=`${proposal.explanation}\n\n${proposal.diff}\n\nComplete replacement for ${proposal.patch.path}:\n${proposal.patch.replacement}`;$('verification').textContent=JSON.stringify(last.verification,null,2);}
     $('status').textContent=`${result.reason || `Repair ${result.status}.`} Review the evidence and final replacement before export.`;
   }catch(error){$('repair-result').textContent='No successful repair report.';$('status').textContent=error.message;}finally{lockInputs(false);}
+});
+
+$('stop-all').addEventListener('click',()=>{batchStop=true;$('stop-all').disabled=true;$('batch-status').textContent='Stopping after the current request or pacing interval. Completed results will remain available.';});
+$('run-all').addEventListener('click',async()=>{
+  if(previewSignature!==signature()||!$('consent').checked||!$('approve-batch').checked){$('batch-status').textContent='Preview current files and approve provider submission plus the 13-request run first.';return;}
+  if(!$('task').value.trim()||new TextEncoder().encode($('task').value).length>2000){$('batch-status').textContent='Enter a task of 1 to 2,000 UTF-8 bytes before starting.';return;}
+  try{sessionToken($('token').value);}catch(error){$('batch-status').textContent=error.message;return;}
+  const payload={archive,selected:selection(),task:$('task').value,provider,consent:true,public_input_confirmed:publicInputRequired};
+  clearResults();batchStop=false;lockInputs(true);$('stop-all').disabled=false;
+  try{
+    batchReport=await runBatch(allWorkflows.map(w=>w.id),{
+      stopped:()=>batchStop,
+      execute:workflow=>request('/api/investigate',{...payload,workflow}),
+      onProgress:item=>{emit('batch-progress',item);$('batch-status').textContent=`${item.completed}/13 completed · ${item.id.replaceAll('-',' ')} · ${item.status}${item.status==='waiting'?' (pacing requests for quotas)':''}`;}
+    });
+    $('batch-status').textContent=`${batchReport.status.replaceAll('_',' ')} · ${batchReport.completed}/13 processed · ${batchReport.results.filter(r=>r.status==='failed').length} failed. Review each report; no tests ran or changes were applied.`;
+    $('download-all').disabled=false;
+  }catch(error){$('batch-status').textContent=error.message;}
+  finally{lockInputs(false);$('stop-all').disabled=true;}
+});
+$('download-all').addEventListener('click',()=>{
+  if(!batchReport)return;
+  const url=URL.createObjectURL(new Blob([JSON.stringify(batchReport,null,2)],{type:'application/json'}));
+  const link=document.createElement('a');link.href=url;link.download='devtwin-13-investigations.json';link.click();URL.revokeObjectURL(url);
 });

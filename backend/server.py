@@ -72,7 +72,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
-        self.send_header('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+        self.send_header('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
         self.end_headers()
         self.wfile.write(raw)
 
@@ -87,6 +87,9 @@ class Handler(BaseHTTPRequestHandler):
         assets = {'/': ('index.html', 'text/html; charset=utf-8'),
                   '/app.mjs': ('app.mjs', 'text/javascript; charset=utf-8'),
                   '/github.mjs': ('github.mjs', 'text/javascript; charset=utf-8'),
+                  '/shell.mjs': ('shell.mjs', 'text/javascript; charset=utf-8'),
+                  '/batch.mjs': ('batch.mjs', 'text/javascript; charset=utf-8'),
+                  '/portrait.jpg': ('portrait.jpg', 'image/jpeg'),
                   '/style.css': ('style.css', 'text/css; charset=utf-8')}
         if self.path not in assets:
             return self.reply(404, {'error': 'Not found'})

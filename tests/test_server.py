@@ -135,7 +135,7 @@ class ServerTests(unittest.TestCase):
         self.assertNotIn(b'private token', raw)
 
     def test_static_assets_and_path_allowlist(self):
-        for path in ('/', '/app.mjs', '/style.css'):
+        for path in ('/', '/app.mjs', '/style.css', '/shell.mjs', '/batch.mjs', '/portrait.jpg'):
             status, _, headers = self.call(path, method='GET')
             self.assertEqual(status, 200)
             self.assertIn("connect-src 'self'", headers['Content-Security-Policy'])

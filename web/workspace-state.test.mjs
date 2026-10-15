@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {sessionToken,githubInput} from '../backend/ui/github.mjs';
+import {runBatch,workflows as allWorkflows} from '../backend/ui/batch.mjs';
 
 // Exercise production event handlers with an in-memory DOM, without a browser or network.
 function workspace(){
@@ -13,7 +14,7 @@ function workspace(){
   for(const match of html.matchAll(/id="([^"]+)"/g))nodes.set(match[1],element());
   const calls=[],responses=[];
   const context=vm.createContext({document:{getElementById:id=>nodes.get(id),createElement:element},
-    sessionToken,githubInput,fetch:async(route)=>{calls.push(route);const result=responses.shift();
+    sessionToken,githubInput,TextEncoder,allWorkflows,runBatch:(ids,options)=>runBatch(ids,{...options,pause:async()=>{}}),fetch:async(route)=>{calls.push(route);const result=responses.shift();
       if(result instanceof Error)throw result;
       return {ok:true,json:async()=>result};}});
   const script=fs.readFileSync(new URL('../backend/ui/app.mjs',import.meta.url),'utf8').replace(/^\uFEFF?import [^\n]*\n/,'');
@@ -101,4 +102,17 @@ test('blocked investigation remains inspectable without showing stale or null an
   assert.match(w.nodes.get('status').textContent,/Retry later/);
   assert.equal(w.nodes.get('export').disabled,false);
   assert.equal(w.nodes.get('verify').disabled,true);
+});
+
+test('all-workflow action requires separate approval and dispatches thirteen source-only calls',async()=>{
+ const w=workspace();await w.preview();w.nodes.get('task').value='Review selected source';
+ const before=w.calls.length;await w.emit('run-all');assert.equal(w.calls.length,before);
+ w.nodes.get('approve-batch').checked=true;
+ for(const workflow of allWorkflows)w.responses.push({workflow:workflow.id,status:'unverified_source_analysis'});
+ await w.emit('run-all');assert.equal(w.calls.length-before,13);
+ assert.ok(w.calls.slice(before).every(route=>route==='/api/investigate'));
+ assert.equal(w.nodes.get('download-all').disabled,false);
+ assert.equal(w.nodes.get('stop-all').disabled,true);
+ assert.match(w.nodes.get('batch-status').textContent,/13\/13 processed/);
+ w.emit('task','input');assert.equal(w.nodes.get('download-all').disabled,true);
 });
