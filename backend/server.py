@@ -1,4 +1,4 @@
-"""Loopback-only internal trial workspace; no public hosting or command execution."""
+"""Authenticated local investigation and isolated-test workspace; not public hosting."""
 import argparse
 import base64
 import binascii
@@ -13,7 +13,7 @@ from .investigate import WORKFLOWS, investigate
 from .nvidia import ProviderError
 from .providers import provider_info
 from .patches import export_candidate, propose
-from .github import GithubError, import_repository
+from .github import GithubError, import_repository, list_repository
 from .runner import verify_candidate, verify_dispatch
 from .repair import repair
 from .workspace import WorkspaceError, ingest_zip
@@ -24,12 +24,13 @@ MAX_BODY = 3 * 1024 * 1024
 
 class WorkspaceServer(HTTPServer):
     def __init__(self, port, token, *, analyze=investigate, propose_patch=propose, import_repo=import_repository,
-                 verify=verify_dispatch, listen='127.0.0.1', worker_only=False):
+                 verify=verify_dispatch, list_repo=list_repository, listen='127.0.0.1', worker_only=False):
         if not isinstance(token, str) or len(token) < 32 or not token.isascii() or not token.isalnum():
             raise ValueError('DEVTWIN_SESSION_TOKEN must contain at least 32 ASCII letters/digits')
         self.token, self.analyze, self.calls = token, analyze, []
         self.propose_patch = propose_patch
         self.import_repo, self.import_calls = import_repo, []
+        self.list_repo = list_repo
         self.verify, self.verification_calls = verify, []
         if listen not in ('127.0.0.1', '0.0.0.0'):
             raise ValueError('Unsupported listen address')
@@ -83,6 +84,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(200, {'ready': True}) if self.path == '/health' else self.reply(404, {'error': 'Not found'})
         assets = {'/': ('index.html', 'text/html; charset=utf-8'),
                   '/app.mjs': ('app.mjs', 'text/javascript; charset=utf-8'),
+                  '/github.mjs': ('github.mjs', 'text/javascript; charset=utf-8'),
                   '/style.css': ('style.css', 'text/css; charset=utf-8')}
         if self.path not in assets:
             return self.reply(404, {'error': 'Not found'})
@@ -95,7 +97,7 @@ class Handler(BaseHTTPRequestHandler):
         supplied = self.headers.get('Authorization', '')
         if not hmac.compare_digest(supplied.encode(), ('Bearer ' + self.server.token).encode()):
             return self.reply(401, {'error': 'Workspace authentication required'})
-        routes = ('/api/verify',) if self.server.worker_only else ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github', '/api/verify', '/api/repair')
+        routes = ('/api/verify',) if self.server.worker_only else ('/api/preview', '/api/investigate', '/api/propose', '/api/export', '/api/github', '/api/github/tree', '/api/verify', '/api/repair')
         if self.path not in routes:
             return self.reply(404, {'error': 'Not found'})
         if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
@@ -112,7 +114,7 @@ class Handler(BaseHTTPRequestHandler):
             if len(body) != length:
                 raise ValueError()
             data = json.loads(body)
-            if self.path == '/api/github':
+            if self.path in ('/api/github', '/api/github/tree'):
                 if not isinstance(data, dict):
                     raise ValueError()
                 now = time.monotonic()
@@ -120,7 +122,12 @@ class Handler(BaseHTTPRequestHandler):
                 if len(self.server.import_calls) >= 2:
                     return self.reply(429, {'error': 'GitHub import limit reached; wait before importing again'})
                 self.server.import_calls.append(now)
-                return self.reply(200, self.server.import_repo(data.get('repository'), data.get('ref'), data.get('selected')))
+                try:
+                    result = (self.server.list_repo(data.get('repository'), data.get('ref')) if self.path.endswith('/tree')
+                              else self.server.import_repo(data.get('repository'), data.get('ref'), data.get('selected')))
+                except WorkspaceError as exc:
+                    return self.reply(400, {'error': str(exc)})
+                return self.reply(200, result)
             if not isinstance(data, dict) or not isinstance(data.get('archive'), str):
                 raise ValueError()
             archive = base64.b64decode(data['archive'], validate=True)

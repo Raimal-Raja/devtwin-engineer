@@ -1,21 +1,20 @@
-# Internal browser workspace
+# Local browser workspace
 
-This increment connects browser ZIP selection, selected-file preview and source investigation through a loopback-only HTTP backend. It requires no Codex/Claude plugin. It is an internal development preview, separate from the hosted public catalog. NVIDIA trial restrictions still apply; submit only nonconfidential inputs you are authorized to send.
+The browser app connects selected-file preview, GitHub import, source investigation, reviewed proposals, ZIP export, isolated verification and a bounded repair loop. It requires no Codex/Claude plugin. It is separate from the public catalog; the full backend is not publicly hosted.
 
-Set the provider credential as `NVIDIA_API_KEY` in the backend environment. Set a separate `DEVTWIN_SESSION_TOKEN` with at least 32 random ASCII letters/digits. Neither value belongs in source control or command-line arguments. The browser session token is not the NVIDIA key. Enter it in the local page; it stays in page memory and is not stored by the application.
+Use [Docker setup](docker.md) and [OpenRouter setup](openrouter.md). The current local configuration uses free Nemotron with the user-approved public/synthetic-only storage/training policy. Provider secrets stay in the app environment; the private worker receives no provider keys. Enter `DEVTWIN_SESSION_TOKEN` from `.env.docker` in the page, never a provider API key. It stays in page memory rather than browser storage.
 
-Alternatively, select Groq or Gemini using `DEVTWIN_PROVIDER` and its environment key as described in [free-tier providers](free-providers.md). Preview displays the selected provider/model and notice before approval. It rejects a submission naming a different provider and never silently switches after a quota failure.
+At http://127.0.0.1:8765/:
 
-From the repository root:
+1. Upload a ZIP and list selected paths, or [browse a GitHub repository](github-workspace.md), select files and import them. Blank branch uses the default branch.
+2. Preview files and hashes without a model call. Select a workflow, enter the task and review the provider policy. Confirm public/synthetic inputs when required.
+3. Investigate selected source and review evidence. Citation bounds and JSON structure are checked; semantic correctness remains unverified. Download the report if useful.
+4. Request a focused patch. Review its diff and complete replacement. Export requires explicit approval; existing selected tests are preserved and the original repository remains unchanged.
+5. Separately approve isolated execution. The worker runs baseline and candidate unittest cases in disposable containers and reports actual counts, failures, skips and limits.
+6. Alternatively approve the bounded loop: one investigation, proposal and verification, with one further candidate only after failed tests. Review the final replacement before export.
 
-```powershell
-python -m backend.server --port 8765
-```
+Selected UTF-8 source is limited to 30 files and 16,000 bytes; ZIP uploads are limited to 2 MiB. Test execution supports selected standard-library Python unittest modules with importable module paths, including namespace test directories without `__init__.py`. GUI applications, dependency installation and arbitrary user commands are not execution features.
 
-Open `http://127.0.0.1:8765/`. Enter the workspace token, choose a ZIP and list exact selected paths, one per line. Preview validates and displays selected source and hashes without calling NVIDIA. Choose a workflow and enter the task. Approve submission of the selected nonconfidential files before investigating. Review the report and optionally download its JSON. Source/result text is rendered literally, including HTML-like content. Inputs are locked during requests to avoid attaching results to a changed task/selection.
+The direct server entry point defaults to loopback. Compose publishes only the app at 127.0.0.1:8765 and keeps the verification worker private. Exact Host/Origin, separate app/worker tokens, explicit static assets, bounded JSON, no-cache/CSP headers, disabled request logging and rolling request limits are enforced. Browse/import share two requests per minute, model calls five, and verification two; the repair loop reserves its maximum budget. No automatic transport retry, paid fallback or billing upgrade occurs. See [runner controls](isolated-runner.md).
 
-The server binds only `127.0.0.1`, enforces its exact Host and Origin, requires the separate token for API calls, serves only three explicit static paths, accepts bounded JSON requests, and limits investigations to five requests per rolling minute. It makes no automatic provider retries. Responses disable caching and apply a restrictive content security policy. HTTP request logs are disabled. ZIP files and analysis are held in memory; reports are persisted only by explicit browser download. These controls are for local development, not a production authentication/abuse system. A shared computer administrator or process may inspect memory/environment; no multi-user isolation is claimed.
-
-Seven real loopback HTTP test methods exercise authentication, origin/host rejection, preview, consent/input limits, rate limits, provider/unexpected failures and asset path controls. Browser QA uses synthetic files with a simulated provider. Earlier live NVIDIA checks establish provider availability separately; this does not claim a live browser-to-model test or security audit.
-
-The next [patch review workflow](patch-review.md) supports one selected-file proposal and approved ZIP export. It does not modify your checkout. An autonomous agent tool loop, isolated execution and production provider/access/hosting validation remain unfinished. Do not expose this development server through a public tunnel.
+API checks exercise authentication, preview, consent, live analysis, proposals, approval-gated export, Docker execution, the bounded loop and source preservation. Client input tests exercise missing/wrong tokens, repository URLs and selection errors. These are local development checks, not visual browser certification, an independent security audit or public deployment approval. Do not expose the development server through a public tunnel.

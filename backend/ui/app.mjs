@@ -1,12 +1,14 @@
+import {sessionToken,githubInput} from '/github.mjs';
 const $=id=>document.getElementById(id);
+let githubSnapshot=null;
 let archive='',previewSignature='',report=null,provider='',proposal=null,publicInputRequired=false;
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
 function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-run').checked=false;$('verification').textContent='No checks executed.';for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=true;}
 function invalidate(){previewSignature='';provider='';publicInputRequired=false;report=null;clearPatch();$('approve-loop').checked=false;$('repair-result').textContent='No repair loop executed.';$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('repair').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
-function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','approve-loop'])$(id).disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
+function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','github-browse','approve-loop'])$(id).disabled=busy;for(const item of $('github-list').querySelectorAll('input'))item.disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
 async function request(route,data){
-  const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+$('token').value},body:JSON.stringify(data),cache:'no-store'});
+  const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionToken($('token').value)},body:JSON.stringify(data),cache:'no-store'});
   const result=await response.json();
   if(!response.ok)throw new Error(result.error||'Request failed');
   return result;
@@ -18,12 +20,26 @@ $('archive').addEventListener('change',async()=>{
   try{const bytes=new Uint8Array(await file.arrayBuffer());let raw='';for(const byte of bytes)raw+=String.fromCharCode(byte);archive=btoa(raw);$('status').textContent='ZIP loaded locally. Select exact file paths and preview.';}catch{$('status').textContent='ZIP could not be loaded.';}
 });
 $('selected').addEventListener('input',invalidate);
+for(const id of ['repository','ref'])$(id).addEventListener('input',()=>{githubSnapshot=null;$('github-list').textContent='Browse this repository to choose files.';});
+$('github-browse').addEventListener('click',async()=>{
+  try{sessionToken($('token').value);githubInput($('repository').value,$('ref').value,[],false);}catch(error){$('github-source').textContent=error.message;return;}
+  lockInputs(true);$('github-source').textContent='Reading repository file list; no source submission to a model…';
+  try{const result=await request('/api/github/tree',githubInput($('repository').value,$('ref').value,[],false));
+    githubSnapshot={input:JSON.stringify([$('repository').value.trim(),$('ref').value.trim()]),commit:result.commit};
+    $('github-list').replaceChildren();
+    for(const file of result.files){const label=document.createElement('label'),input=document.createElement('input');label.className='consent';input.type='checkbox';input.value=file.path;input.checked=selection().includes(file.path);label.append(input,document.createTextNode(`${file.path} · ${file.bytes} bytes`));input.addEventListener('change',()=>{$('selected').value=[...$('github-list').querySelectorAll('input:checked')].map(item=>item.value).join('\n');invalidate();});$('github-list').append(label);}
+    if(!result.files.length)$('github-list').textContent='No supported text files within the current size limit.';
+    $('github-source').textContent=`${result.repository} · ${result.ref} · ${result.commit} · choose files, then import. ${result.files_truncated?'Showing the first 250 eligible files. ':''}Content is validated during import.`;
+  }catch(error){githubSnapshot=null;$('github-list').textContent='No file list loaded.';$('github-source').textContent=`GitHub browse failed: ${error.message}`;}finally{lockInputs(false);}
+});
 $('github').addEventListener('click',async()=>{
+  let input;try{sessionToken($('token').value);input=githubInput($('repository').value,$('ref').value,selection());}catch(error){$('github-source').textContent=error.message;return;}
+  if(githubSnapshot?.input===JSON.stringify([input.repository,input.ref]))input.ref=githubSnapshot.commit;
   archive='';invalidate();lockInputs(true);$('status').textContent='Importing selected GitHub files; no model call…';$('github-source').textContent='Import pending.';
-  try{const result=await request('/api/github',{repository:$('repository').value.trim(),ref:$('ref').value.trim(),selected:selection()});
+  try{const result=await request('/api/github',input);
     archive=result.archive;$('archive').value='';$('github-source').textContent=`${result.repository} · ${result.commit} · ${result.private?'Private':'Public'} · read-only import. No model submission.`;
     $('status').textContent='GitHub import ready. Preview selected files before provider submission.';
-  }catch(error){$('github-source').textContent='No successful GitHub import.';$('status').textContent=error.message;}finally{lockInputs(false);$('workflow').disabled=true;}
+  }catch(error){$('github-source').textContent=`GitHub import failed: ${error.message}`;$('status').textContent=error.message;}finally{lockInputs(false);$('workflow').disabled=true;}
 });
 $('preview').addEventListener('click',async()=>{
   invalidate();lockInputs(true);$('preview').disabled=true;$('status').textContent='Validating selection…';

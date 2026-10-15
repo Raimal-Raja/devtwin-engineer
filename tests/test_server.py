@@ -11,6 +11,7 @@ import zipfile
 
 from backend.server import MAX_BODY, WorkspaceServer
 from backend.nvidia import ProviderError
+from backend.workspace import WorkspaceError
 
 
 class ServerTests(unittest.TestCase):
@@ -24,8 +25,9 @@ class ServerTests(unittest.TestCase):
         self.import_repo = Mock(return_value={'repository': 'x/y', 'commit': 'a' * 40,
                                               'submitted_to_model': False, 'github_writes': False})
         self.verify = Mock(return_value={'status': 'blocked', 'reason': 'Synthetic missing runner'})
+        self.list_repo = Mock(return_value={'repository': 'x/y', 'files': [], 'commit': 'a' * 40})
         self.server = WorkspaceServer(0, 'a' * 32, analyze=self.analyze, propose_patch=self.propose,
-                                      import_repo=self.import_repo, verify=self.verify)
+                                      import_repo=self.import_repo, verify=self.verify, list_repo=self.list_repo)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
         self.addCleanup(self.close)
@@ -61,6 +63,16 @@ class ServerTests(unittest.TestCase):
         self.assertFalse(json.loads(raw)['submitted_to_model'])
         self.assertEqual(json.loads(raw)['files'][0]['content'], 'pass\n')
         self.assertEqual(headers['Cache-Control'], 'no-store')
+        self.analyze.assert_not_called()
+
+    def test_github_browser_and_actionable_input_errors(self):
+        status, raw, _ = self.call('/api/github/tree', {'repository': 'x/y'})
+        self.assertEqual(status, 200)
+        self.list_repo.assert_called_once_with('x/y', None)
+        self.import_repo.side_effect = WorkspaceError('Select 1 to 30 text files')
+        status, raw, _ = self.call('/api/github', {'repository': 'x/y', 'selected': []})
+        self.assertEqual(status, 400)
+        self.assertEqual(json.loads(raw)['error'], 'Select 1 to 30 text files')
         self.analyze.assert_not_called()
 
     def test_repair_requires_consent_and_reserves_bounded_budgets(self):

@@ -5,15 +5,16 @@ import json
 from pathlib import Path
 import zipfile
 
-BACKEND = ('__init__.py', 'github.py', 'investigate.py', 'nvidia.py', 'patches.py',
+BACKEND = ('__init__.py', 'discovery.py', 'github.py', 'investigate.py', 'nvidia.py', 'patches.py',
            'providers.py', 'repair.py', 'runner.py', 'server.py', 'workspace.py',
-           'ui/app.mjs', 'ui/index.html', 'ui/style.css')
+           'ui/app.mjs', 'ui/github.mjs', 'ui/index.html', 'ui/style.css')
 REFERENCES = ('api-compatibility', 'bug-reproduction', 'change-impact', 'database-review',
               'delivery-preparation', 'dependency-diagnosis', 'documentation-verification',
               'feature-tracing', 'implementation', 'performance-investigation',
               'regression-testing', 'repository-understanding', 'routing', 'security-review')
 FILES = (('Dockerfile', 'compose.yaml', '.dockerignore', 'scripts/prepare_docker.py', 'scripts/start_openrouter.py',
-          'docs/docker.md', 'docs/repair-loop.md', 'docs/isolated-runner.md', 'docs/free-hosting.md', 'docs/openrouter.md')
+          'docs/docker.md', 'docs/repair-loop.md', 'docs/isolated-runner.md', 'docs/free-hosting.md', 'docs/openrouter.md',
+          'docs/github-workspace.md', 'docs/local-workspace.md')
          + tuple('backend/' + name for name in BACKEND)
          + tuple('references/' + name + '.md' for name in REFERENCES))
 

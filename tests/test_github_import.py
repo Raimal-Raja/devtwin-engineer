@@ -47,8 +47,31 @@ class GithubImportTests(unittest.TestCase):
             with self.assertRaises(WorkspaceError):
                 github.import_repository('x/y', 'main', selected, fetch=fetch)
         with self.assertRaises(WorkspaceError):
-            github.import_repository('x/y', '', ['app.py'], fetch=fetch)
+            github.import_repository('x/y', '\x00', ['app.py'], fetch=fetch)
         fetch.assert_not_called()
+
+    def test_blank_ref_uses_default_branch_and_listing_does_not_fetch_blobs(self):
+        fetch = self.fetch()
+        responses = list(fetch.side_effect)
+        responses[0]['default_branch'] = 'primary'
+        fetch.side_effect = responses
+        result = github.list_repository('x/y', '', fetch=fetch)
+        self.assertEqual(result['ref'], 'primary')
+        self.assertEqual(result['files'], [{'path': 'app.py', 'bytes': len(self.raw)}])
+        self.assertEqual(fetch.call_count, 3)
+        self.assertIn('/commits/primary', fetch.call_args_list[1].args[0])
+        self.assertFalse(result['content_validated'])
+        imported = github.import_repository('x/y', '', ['app.py'], fetch=Mock(side_effect=responses))
+        self.assertEqual(imported['ref'], 'primary')
+
+    def test_listing_filters_excluded_unsupported_and_oversize_files(self):
+        entries = [self.entry, {**self.entry, 'path': '.env'}, {**self.entry, 'path': '.aws/a.py'},
+                   {**self.entry, 'path': 'app.exe'}, {**self.entry, 'path': 'link.py', 'mode': '120000'},
+                   {**self.entry, 'path': 'large.py', 'size': 16001}]
+        responses = [{'private': False}, {'sha': self.commit, 'commit': {'tree': {'sha': self.tree}}},
+                     {'truncated': False, 'tree': entries}]
+        result = github.list_repository('x/y', 'main', fetch=Mock(side_effect=responses))
+        self.assertEqual([file['path'] for file in result['files']], ['app.py'])
 
     def test_links_submodules_missing_and_size_rejected(self):
         for update in ({'mode': '120000'}, {'type': 'commit', 'mode': '160000'}, {'size': 16001}, {'path': 'other.py'}):

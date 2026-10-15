@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-15",
+  "scope": "Local HTTP/Docker integration plus client-input checks; no visual browser certification",
+  "initial_stages": [
+    {
+      "name": "Static app and browser modules",
+      "passed": true
+    },
+    {
+      "name": "GitHub browse and pinned selected import",
+      "passed": true,
+      "repository": "Raimal-Raja/AutoReply-Whatsapp-Bot",
+      "branch": "main",
+      "files": 2
+    },
+    {
+      "name": "ZIP selection, preview and authentication",
+      "passed": true,
+      "workflows": 13
+    },
+    {
+      "name": "Investigation consent and evidence report",
+      "passed": true,
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "findings": 1
+    }
+  ],
+  "initial_external_failure": "propose returned 502: OpenRouter returned an upstream generation error; no retry or fallback was made",
+  "remaining_stages": [
+    {
+      "name": "Live proposal, review approval and ZIP export",
+      "passed": true,
+      "tests_preserved": true
+    },
+    {
+      "name": "Manual isolated verification",
+      "passed": true,
+      "baseline": "failed",
+      "candidate_tests": 5
+    },
+    {
+      "name": "Waiting for the documented verification quota reset"
+    },
+    {
+      "name": "Bounded repair loop",
+      "passed": true,
+      "attempts": 1
+    },
+    {
+      "name": "Original source unchanged",
+      "passed": true
+    }
+  ],
+  "remaining_checks_passed": true,
+  "user_repo": {
+    "repository": "Raimal-Raja/AutoReply-Whatsapp-Bot",
+    "commit": "0338df6737590336d9db084ff6a0d210b6114743",
+    "imported_supported_files": 7,
+    "selected_test_modules": [
+      "chat_utils.py",
+      "tests/test_chat_utils.py"
+    ],
+    "baseline_tests": 3,
+    "candidate_tests": 3,
+    "status": "passed",
+    "target_repository_changed": false
+  },
+  "regression_gates": [
+    {
+      "gate": "package",
+      "passed": true,
+      "errors": []
+    },
+    {
+      "gate": "capability_resources",
+      "passed": true
+    },
+    {
+      "gate": "tests",
+      "passed": true,
+      "tests_run": 146,
+      "skipped": 2,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "gate": "web_tests",
+      "passed": true,
+      "tests_run": 9,
+      "failures": 0,
+      "skipped": 0
+    },
+    {
+      "gate": "archive",
+      "passed": true
+    }
+  ]
+}

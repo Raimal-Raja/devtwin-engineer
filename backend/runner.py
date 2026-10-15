@@ -8,6 +8,7 @@ import tempfile
 import threading
 import uuid
 import base64
+import inspect
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
@@ -17,6 +18,7 @@ from .nvidia import NoRedirect
 
 from .patches import validate_patch
 from .workspace import WorkspaceError, ingest_zip
+from .discovery import discover_selected_tests
 
 OUTPUT_LIMIT = 32768
 
@@ -34,7 +36,7 @@ def find_docker():
     return None
 
 
-HARNESS = r'''
+HARNESS = inspect.getsource(discover_selected_tests) + r'''
 import contextlib, json, os, pathlib, sys, unittest
 payload = json.load(sys.stdin)
 root = pathlib.Path('/tmp/project')
@@ -53,7 +55,7 @@ class Log:
     def flush(self): pass
 log = Log()
 with contextlib.redirect_stdout(log), contextlib.redirect_stderr(log):
-    suite = unittest.defaultTestLoader.discover('.', pattern='test*.py')
+    suite = discover_selected_tests(root, [item['path'] for item in payload])
     result = unittest.TextTestRunner(stream=log, verbosity=2).run(suite)
 passed = result.wasSuccessful() and result.testsRun > len(result.skipped)
 print(json.dumps({'passed': passed, 'tests_run': result.testsRun, 'skipped': len(result.skipped),
@@ -144,8 +146,12 @@ def _run_files(files, docker, image, config, *, execute=_bounded):
             raise ValueError()
         passed = (result['returncode'] == 0 and report['tests_run'] > report['skipped']
                   and report['failures'] == 0 and report['errors'] == 0 and report.get('passed') is True)
-        if result['returncode'] not in (0, 1) or report['tests_run'] == 0 or report['tests_run'] <= report['skipped']:
-            return {'status': 'blocked', 'reason': 'No executed tests or unavailable container runtime/image'}
+        if result['returncode'] not in (0, 1):
+            return {'status': 'blocked', 'reason': 'Container runtime did not complete a supported test run'}
+        if report['tests_run'] == 0:
+            return {'status': 'blocked', 'reason': 'No unittest cases discovered; select test*.py modules containing unittest tests'}
+        if report['tests_run'] <= report['skipped']:
+            return {'status': 'blocked', 'reason': 'All selected tests were skipped; no test executed'}
     except (ValueError, KeyError, TypeError):
         return {'status': 'blocked', 'reason': 'Container returned no valid test report'}
     report['passed'] = passed
