@@ -22,7 +22,7 @@ function workspace(){
   nodes.get('selected').value='app.py';
   vm.runInContext("archive='encoded';",context);
   const emit=(id,event='click')=>nodes.get(id).events[event]();
-  async function preview(){responses.push({files:[{path:'app.py',content:'pass',sha256:'hash'}],
+  async function preview(){responses.push({files:[{path:'app.py',content:'pass',sha256:'hash'},{path:'test_app.py',content:'',sha256:'testhash'}],
     workflows:['implementation'],provider:{id:'test',name:'Test',configured:true,notice:'',model:'fake'}});
     await emit('preview');nodes.get('consent').checked=true;}
   return {nodes,calls,responses,emit,preview};
@@ -77,5 +77,28 @@ test('proposal execution and export require review and explicit execution consen
   w.emit('task','input');
   assert.equal(w.nodes.get('approve-patch').checked,false);
   assert.equal(w.nodes.get('approve-run').checked,false);
+  assert.equal(w.nodes.get('verify').disabled,true);
+});
+
+test('documentation-only selections show prerequisites and block repair before requests',async()=>{
+  const w=workspace();
+  w.responses.push({files:[{path:'README.md',content:'Docs',sha256:'hash'}],workflows:['implementation'],
+    provider:{id:'test',name:'Test',configured:true,notice:'',model:'fake'}});
+  await w.emit('preview');
+  assert.equal(w.nodes.get('repair').disabled,true);
+  assert.equal(w.nodes.get('investigate').disabled,false);
+  assert.match(w.nodes.get('runner-readiness').textContent,/No Python test modules/);
+  const before=w.calls.length;await w.emit('repair');
+  assert.equal(w.calls.length,before);
+});
+
+test('blocked investigation remains inspectable without showing stale or null analysis',async()=>{
+  const w=workspace();await w.preview();w.nodes.get('approve-loop').checked=true;
+  w.responses.push({status:'blocked',analysis:null,attempts:[],patch:null,stage:'investigation',
+    error_code:'provider_failure',reason:'Investigation provider request failed. Retry later.'});
+  await w.emit('repair');
+  assert.match(w.nodes.get('result').textContent,/No investigation completed/);
+  assert.match(w.nodes.get('status').textContent,/Retry later/);
+  assert.equal(w.nodes.get('export').disabled,false);
   assert.equal(w.nodes.get('verify').disabled,true);
 });

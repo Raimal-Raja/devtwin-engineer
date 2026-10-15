@@ -16,7 +16,7 @@ from .providers import provider_info
 from .patches import export_candidate, propose
 from .github import GithubError, import_repository, list_repository
 from .runner import verify_candidate, verify_dispatch
-from .repair import repair
+from .repair import repair, validate_repair_selection
 from .workspace import WorkspaceError, ingest_zip
 
 UI = Path(__file__).parent / 'ui'
@@ -141,6 +141,8 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError()
             archive = base64.b64decode(data['archive'], validate=True)
             files = ingest_zip(archive, data.get('selected'))
+            if self.path == '/api/repair':
+                validate_repair_selection(files)
             if self.path == '/api/preview':
                 return self.reply(200, {'files': files, 'workflows': sorted(WORKFLOWS),
                                         'provider': provider_info(), 'submitted_to_model': False})
@@ -185,7 +187,9 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 result = self.server.analyze(archive, data['selected'], data.get('task'), data.get('workflow'))
             self.reply(200, result)
-        except (ValueError, TypeError, KeyError, binascii.Error, WorkspaceError):
+        except WorkspaceError as exc:
+            self.reply(400, {'error': str(exc)})
+        except (ValueError, TypeError, KeyError, binascii.Error):
             self.reply(400, {'error': 'Invalid archive, selection or task; check the input limits'})
         except ProviderError as exc:
             self.reply(502, {'error': str(exc)})

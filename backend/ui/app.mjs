@@ -2,12 +2,13 @@ import {sessionToken,githubInput} from '/github.mjs';
 const $=id=>document.getElementById(id);
 let githubSnapshot=null;
 let archive='',previewSignature='',report=null,provider='',proposal=null,publicInputRequired=false;
+let runnableSelection=false;
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
 function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-run').checked=false;$('verification').textContent='No checks executed.';for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=true;}
 function clearResults(){report=null;clearPatch();$('result').textContent='No current report.';$('repair-result').textContent='No repair loop executed.';$('export').disabled=true;$('approve-loop').checked=false;}
 function invalidate(){previewSignature='';provider='';publicInputRequired=false;report=null;clearPatch();$('approve-loop').checked=false;$('repair-result').textContent='No repair loop executed.';$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('repair').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
-function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','github-browse','approve-loop'])$(id).disabled=busy;for(const item of $('github-list').querySelectorAll('input'))item.disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
+function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','github-browse','approve-loop'])$(id).disabled=busy;for(const item of $('github-list').querySelectorAll('input'))item.disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;$('workflow').disabled=busy||!previewSignature;$('repair').disabled=busy||!previewSignature||!runnableSelection;$('verify').disabled=busy||!proposal||!runnableSelection;}
 async function request(route,data){
   const response=await fetch(route,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+sessionToken($('token').value)},body:JSON.stringify(data),cache:'no-store'});
   const result=await response.json();
@@ -30,7 +31,7 @@ $('github-browse').addEventListener('click',async()=>{
     $('github-list').replaceChildren();
     for(const file of result.files){const label=document.createElement('label'),input=document.createElement('input');label.className='consent';input.type='checkbox';input.value=file.path;input.checked=selection().includes(file.path);label.append(input,document.createTextNode(`${file.path} · ${file.bytes} bytes`));input.addEventListener('change',()=>{$('selected').value=[...$('github-list').querySelectorAll('input:checked')].map(item=>item.value).join('\n');invalidate();});$('github-list').append(label);}
     if(!result.files.length)$('github-list').textContent='No supported text files within the current size limit.';
-    $('github-source').textContent=`${result.repository} · ${result.ref} · ${result.commit} · choose files, then import. ${result.files_truncated?'Showing the first 250 eligible files. ':''}Content is validated during import.`;
+    $('github-source').textContent=`${result.repository} · ${result.ref} · ${result.commit} · choose files, then import. ${result.files_truncated?'Showing the first 250 eligible files. ':''}Content is validated during import. ${result.omitted?`Omitted: ${result.omitted.oversize} files exceed the 16,000-byte limit; ${result.omitted.unsupported_or_excluded} unsupported/excluded files. Not all repository files are listed.`:''} ${(result.oversize_files||[]).map(file=>`${file.path} (${file.bytes} bytes) exceeds the selection limit.`).join(' ')}`;
   }catch(error){githubSnapshot=null;$('github-list').textContent='No file list loaded.';$('github-source').textContent=`GitHub browse failed: ${error.message}`;}finally{lockInputs(false);}
 });
 $('github').addEventListener('click',async()=>{
@@ -49,6 +50,8 @@ $('preview').addEventListener('click',async()=>{
     $('workflow').replaceChildren(...result.workflows.map(value=>{const option=document.createElement('option');option.value=value;option.textContent=value.replaceAll('-',' ');return option;}));
     provider=result.provider.id;publicInputRequired=result.provider.public_input_required===true;$('provider-details').textContent=`${result.provider.name} · ${result.provider.model}. ${result.provider.notice} ${result.provider.configured?'':'API key is not configured.'}`;
     $('provider-consent').textContent=(publicInputRequired?'I confirm these files and my task are public or synthetic, and approve upstream storage/training. ':'')+`I approve sending these selected, nonconfidential files and my task to ${result.provider.name} under the policy shown above.`;
+    runnableSelection=result.files.some(file=>/(^|\/)test[^/]*\.py$/.test(file.path));
+    $('runner-readiness').textContent=runnableSelection?'Selected Python test modules found. Actual discovery, dependencies and results are checked only inside Docker.':'No Python test modules selected. Investigation and proposals are available; isolated verification and repair need test*.py unittest files and their source dependencies. Documentation alone cannot verify an application.';
     $('workflow').disabled=false;previewSignature=current;$('investigate').disabled=false;$('propose').disabled=false;$('status').textContent='Preview ready. Nothing has been sent to the model.';
   }catch(error){$('status').textContent=error.message;}finally{lockInputs(false);$('workflow').disabled=!previewSignature;$('preview').disabled=false;}
 });
@@ -80,6 +83,7 @@ $('download-patch').addEventListener('click',async()=>{
   }catch(error){$('status').textContent=error.message;}finally{lockInputs(false);$('download-patch').disabled=!proposal;$('approve-patch').disabled=!proposal;}
 });
 $('verify').addEventListener('click',async()=>{
+  if(!runnableSelection){$('status').textContent='Select Python unittest files (test*.py) and their source dependencies, then import and preview again.';return;}
   if(!proposal||!$('approve-patch').checked||!$('approve-run').checked){$('status').textContent='Approve the reviewed patch and isolated execution before running checks.';return;}
   lockInputs(true);$('status').textContent='Running original and candidate isolated checks…';$('verification').textContent='Verification pending.';
   try{const result=await request('/api/verify',{archive,selected:selection(),patch:proposal.patch,approved:true,execution_approved:true});
@@ -87,11 +91,12 @@ $('verify').addEventListener('click',async()=>{
   }catch(error){$('verification').textContent='No successful verification report.';$('status').textContent=error.message;}finally{lockInputs(false);}
 });
 $('repair').addEventListener('click',async()=>{
+  if(!runnableSelection){$('status').textContent='Repair needs selected Python unittest files (test*.py) and their source dependencies. Documentation-only selections support investigation.';return;}
   if(previewSignature!==signature()||!$('consent').checked||!$('approve-loop').checked){$('status').textContent='Preview files and approve provider submission and the bounded repair loop first.';return;}
   clearResults();lockInputs(true);$('export').disabled=true;$('status').textContent='Running bounded investigation, candidate generation and isolated checks…';$('repair-result').textContent='Repair pending.';
   try{const result=await request('/api/repair',{archive,selected:selection(),task:$('task').value,workflow:$('workflow').value,consent:true,public_input_confirmed:publicInputRequired,provider,loop_approved:true});
     report=result;$('repair-result').textContent=JSON.stringify(result,null,2);$('export').disabled=false;
-    $('result').textContent=JSON.stringify(result.analysis,null,2);
+    $('result').textContent=result.analysis?JSON.stringify(result.analysis,null,2):'No investigation completed. See the repair outcome for the failed stage and recovery guidance.';
     const last=result.attempts?.at(-1);
     if(last&&result.patch){proposal=last.proposal;$('patch').textContent=`${proposal.explanation}\n\n${proposal.diff}\n\nComplete replacement for ${proposal.patch.path}:\n${proposal.patch.replacement}`;$('verification').textContent=JSON.stringify(last.verification,null,2);}
     $('status').textContent=`${result.reason || `Repair ${result.status}.`} Review the evidence and final replacement before export.`;

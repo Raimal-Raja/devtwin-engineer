@@ -34,6 +34,7 @@ class ServerTests(unittest.TestCase):
         stream = io.BytesIO()
         with zipfile.ZipFile(stream, 'w') as archive:
             archive.writestr('a.py', 'pass\n')
+            archive.writestr('test_a.py', 'import unittest\n')
         self.data = {'archive': base64.b64encode(stream.getvalue()).decode(),
                      'selected': ['a.py'], 'task': 'Explain',
                      'workflow': 'repository-understanding', 'consent': True, 'provider': 'nvidia'}
@@ -76,6 +77,7 @@ class ServerTests(unittest.TestCase):
         self.analyze.assert_not_called()
 
     def test_repair_requires_consent_and_reserves_bounded_budgets(self):
+        self.data['selected'] = ['a.py', 'test_a.py']
         self.assertEqual(self.call('/api/repair', self.data)[0], 400)
         self.analyze.assert_not_called()
         self.propose.return_value = {'patch': {'path': 'a.py',
@@ -87,6 +89,14 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(len(self.server.verification_calls), 2)
         self.assertEqual(self.call('/api/repair', {**self.data, 'loop_approved': True})[0], 429)
         self.analyze.assert_called_once()
+
+    def test_documentation_only_repair_reports_prerequisites_without_model_call(self):
+        status, raw, _ = self.call('/api/repair', {**self.data, 'loop_approved': True})
+        self.assertEqual(status, 400)
+        self.assertIn('test*.py', json.loads(raw)['error'])
+        self.analyze.assert_not_called()
+        self.assertEqual(self.server.calls, [])
+        self.assertEqual(self.server.verification_calls, [])
 
     def test_openrouter_collection_requires_public_input_confirmation(self):
         with patch.dict(os.environ, {'DEVTWIN_PROVIDER': 'openrouter', 'DEVTWIN_OPENROUTER_DATA_POLICY': 'allow'}):

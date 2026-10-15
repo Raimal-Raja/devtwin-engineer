@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-15",
+  "regression": {"passed": true, "python_cases": 151, "python_passed": 149, "python_skipped": 2, "web_tests_passed": 15},
+  "deployed_prerequisite_rejection": {"passed": true, "status": 400, "model_calls": 0},
+  "public_repository_selection": {"eligible_files": 2, "oversize_files": 8, "unsupported_or_excluded_files": 7, "flask_app_bytes": 20341, "selected_bytes_limit": 16000},
+  "live_synthetic_repair": {"status": "repair_demonstrated", "attempts": 1, "baseline": "failed", "candidate": "passed", "candidate_tests": 5, "applied_changes": []},
+  "limitations": ["Selected Python unittest scope only", "Full browser workflow acceptance pending", "Not production scale certification", "Claude execution deferred"]
+}

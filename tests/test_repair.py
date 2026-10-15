@@ -34,6 +34,25 @@ class RepairTests(unittest.TestCase):
                 self.run_loop(**kwargs)
         self.analyze.assert_not_called()
 
+    def test_no_selected_tests_rejected_before_provider_calls(self):
+        self.selected = ['app.py']
+        with self.assertRaisesRegex(WorkspaceError, 'test\\*'):
+            self.run_loop(loop_approved=True)
+        self.analyze.assert_not_called()
+        self.propose.assert_not_called()
+
+    def test_investigation_provider_failure_returns_structured_block_without_execution(self):
+        self.analyze.side_effect = ProviderError('upstream private detail')
+        result = self.run_loop(loop_approved=True)
+        self.assertEqual(result['status'], 'blocked')
+        self.assertEqual(result['stage'], 'investigation')
+        self.assertEqual(result['error_code'], 'provider_failure')
+        self.assertEqual(result['attempts'], [])
+        self.assertIsNone(result['patch'])
+        self.assertNotIn('private detail', str(result))
+        self.propose.assert_not_called()
+        self.verify.assert_not_called()
+
     def test_pass_stops_and_keeps_host_changes_empty(self):
         result = self.run_loop(loop_approved=True)
         self.assertEqual(result['status'], 'checks_passed_no_demonstrated_fix')
@@ -76,7 +95,10 @@ class RepairTests(unittest.TestCase):
 
     def test_invalid_candidate_never_executes(self):
         self.propose.return_value = {'patch': {**self.patch, 'path': 'test_app.py'}}
-        self.assertEqual(self.run_loop(loop_approved=True)['status'], 'blocked')
+        result = self.run_loop(loop_approved=True)
+        self.assertEqual(result['status'], 'blocked')
+        self.assertEqual(result['error_code'], 'invalid_candidate')
+        self.assertNotIn('Provider request failed', result['reason'])
         self.verify.assert_not_called()
 
     def test_retry_provider_failure_keeps_prior_evidence(self):

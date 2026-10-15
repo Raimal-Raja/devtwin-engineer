@@ -113,6 +113,8 @@ def _snapshot(repository, ref, fetch):
 def list_repository(repository, ref='', *, fetch=get_json):
     name, private, resolved_ref, commit, entries = _snapshot(repository, ref, fetch)
     eligible = []
+    omitted = {'oversize': 0, 'unsupported_or_excluded': 0}
+    oversize_files = []
     for path, entry in sorted(entries.items()):
         parts = path.split('/')
         if (not path or '\\' in path or ':' in path or any(p in ('', '.', '..') for p in parts)
@@ -121,10 +123,17 @@ def list_repository(repository, ref='', *, fetch=get_json):
                 or PurePosixPath(path).suffix.lower() not in EXTENSIONS
                 or entry.get('type') != 'blob' or entry.get('mode') not in ('100644', '100755')
                 or type(entry.get('size')) is not int or not 0 <= entry['size'] <= MAX_TOTAL):
+            if entry.get('type') == 'blob':
+                key = 'oversize' if type(entry.get('size')) is int and entry['size'] > MAX_TOTAL else 'unsupported_or_excluded'
+                omitted[key] += 1
+                if key == 'oversize' and len(oversize_files) < 20:
+                    oversize_files.append({'path': path, 'bytes': entry['size']})
             continue
         eligible.append({'path': path, 'bytes': entry['size']})
     return {'repository': name, 'private': private, 'ref': resolved_ref, 'commit': commit,
             'files': eligible[:250], 'files_truncated': len(eligible) > 250,
+            'omitted': omitted, 'selected_bytes_limit': MAX_TOTAL,
+            'oversize_files': oversize_files,
             'submitted_to_model': False, 'content_validated': False}
 
 

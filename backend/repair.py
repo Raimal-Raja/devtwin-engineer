@@ -4,6 +4,18 @@ from .patches import propose, validate_patch
 from .providers import ProviderError
 from .runner import verify_dispatch
 from .workspace import WorkspaceError, ingest_zip
+from pathlib import PurePosixPath
+
+
+def validate_repair_selection(files):
+    tests = [PurePosixPath(file['path']) for file in files
+             if PurePosixPath(file['path']).suffix == '.py'
+             and PurePosixPath(file['path']).name.startswith('test')]
+    if not tests:
+        raise WorkspaceError('Repair requires selected Python unittest files (test*.py) and their source dependencies. '
+                             'README and requirements files alone can be investigated, but cannot verify a repair.')
+    if any(not all(part.isidentifier() for part in (*path.parts[:-1], path.stem)) for path in tests):
+        raise WorkspaceError('Selected tests must have importable Python module paths')
 
 
 def repair(archive, selected, task, workflow, *, loop_approved=False, max_attempts=2,
@@ -13,20 +25,33 @@ def repair(archive, selected, task, workflow, *, loop_approved=False, max_attemp
     if type(max_attempts) is not int or not 1 <= max_attempts <= 2:
         raise WorkspaceError('Repair allows one or two attempts only')
     files = ingest_zip(archive, selected)
-    analysis = analyze(archive, selected, task, workflow)
+    validate_repair_selection(files)
     attempts = []
-    result = {'status': 'blocked', 'analysis': analysis, 'attempts': attempts,
+    result = {'status': 'blocked', 'analysis': None, 'attempts': attempts,
               'applied_changes': [], 'patch': None,
               'limitations': ['Selected Python unittest scope only; passing tests do not prove correctness.',
                               'Candidates execute only after loop consent; export still requires final review.']}
+    try:
+        result['analysis'] = analyze(archive, selected, task, workflow)
+    except ProviderError:
+        result.update(stage='investigation', error_code='provider_failure',
+                      reason='Investigation provider request failed. No candidate or tests ran; retry later after checking provider availability and quotas.')
+        return result
     next_task = task
     for number in range(1, max_attempts + 1):
+        stage = 'proposal'
         try:
             proposal = propose_patch(archive, selected, next_task)
             validate_patch(files, proposal['patch'])
+            stage = 'verification'
             verification = verify(archive, selected, proposal['patch'], approved=True, execution_approved=True)
-        except (ProviderError, WorkspaceError):
-            result['reason'] = 'Provider request failed; stopped without fallback or automatic transport retry'
+        except ProviderError:
+            result.update(stage=stage, error_code='provider_failure',
+                          reason='Provider request failed; stopped without fallback or automatic transport retry')
+            return result
+        except WorkspaceError:
+            result.update(stage=stage, error_code='invalid_candidate',
+                          reason='Candidate or verification input failed validation; stopped without applying changes')
             return result
         attempts.append({'number': number, 'proposal': proposal, 'verification': verification})
         result['patch'] = proposal['patch']
@@ -35,6 +60,9 @@ def repair(archive, selected, task, workflow, *, loop_approved=False, max_attemp
             result['reason'] = 'Invalid verification status; stopped'
             return result
         result['status'] = status
+        if status == 'blocked':
+            result.update(stage='verification', error_code='runner_blocked',
+                          reason=verification.get('reason', 'Isolated verification could not complete; review its report'))
         if status == 'passed':
             baseline = verification.get('baseline', {})
             candidate = verification.get('candidate', {})

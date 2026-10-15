@@ -72,6 +72,9 @@ class GithubImportTests(unittest.TestCase):
                      {'truncated': False, 'tree': entries}]
         result = github.list_repository('x/y', 'main', fetch=Mock(side_effect=responses))
         self.assertEqual([file['path'] for file in result['files']], ['app.py'])
+        self.assertEqual(result['omitted']['oversize'], 1)
+        self.assertEqual(result['oversize_files'], [{'path': 'large.py', 'bytes': 16001}])
+        self.assertEqual(result['omitted']['unsupported_or_excluded'], 4)
 
     def test_links_submodules_missing_and_size_rejected(self):
         for update in ({'mode': '120000'}, {'type': 'commit', 'mode': '160000'}, {'size': 16001}, {'path': 'other.py'}):
