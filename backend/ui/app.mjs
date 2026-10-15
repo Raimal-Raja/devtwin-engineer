@@ -5,6 +5,7 @@ let archive='',previewSignature='',report=null,provider='',proposal=null,publicI
 const selection=()=>$('selected').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 const signature=()=>JSON.stringify([archive,selection()]);
 function clearPatch(){proposal=null;$('patch').textContent='No current patch.';$('approve-patch').checked=false;$('approve-run').checked=false;$('verification').textContent='No checks executed.';for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=true;}
+function clearResults(){report=null;clearPatch();$('result').textContent='No current report.';$('repair-result').textContent='No repair loop executed.';$('export').disabled=true;$('approve-loop').checked=false;}
 function invalidate(){previewSignature='';provider='';publicInputRequired=false;report=null;clearPatch();$('approve-loop').checked=false;$('repair-result').textContent='No repair loop executed.';$('consent').checked=false;$('investigate').disabled=true;$('propose').disabled=true;$('repair').disabled=true;$('export').disabled=true;$('files').textContent='Selection changed. Preview files again.';$('result').textContent='No current report.';}
 function lockInputs(busy){for(const id of ['token','archive','selected','task','workflow','consent','repository','ref','github','github-browse','approve-loop'])$(id).disabled=busy;for(const item of $('github-list').querySelectorAll('input'))item.disabled=busy;for(const id of ['preview','investigate','propose','repair'])$(id).disabled=busy||((id!=='preview')&&!previewSignature);for(const id of ['approve-patch','download-patch','approve-run','verify'])$(id).disabled=busy||!proposal;}
 async function request(route,data){
@@ -53,14 +54,14 @@ $('preview').addEventListener('click',async()=>{
 });
 $('investigate').addEventListener('click',async()=>{
   if(previewSignature!==signature()||!$('consent').checked){$('status').textContent='Preview current files and approve submission first.';return;}
-  const current=signature();lockInputs(true);$('preview').disabled=true;$('investigate').disabled=true;$('status').textContent='Investigating source; no commands or tests are running…';report=null;$('export').disabled=true;
+  const current=signature();clearResults();lockInputs(true);$('preview').disabled=true;$('investigate').disabled=true;$('status').textContent='Investigating source; no commands or tests are running…';
   try{const result=await request('/api/investigate',{archive,selected:selection(),task:$('task').value,workflow:$('workflow').value,consent:true,public_input_confirmed:publicInputRequired,provider});
     if(current!==signature())throw new Error('Selection changed; discard this response and investigate again.');
     report=result;$('result').textContent=JSON.stringify(result,null,2);$('export').disabled=false;$('status').textContent='Source analysis ready. Findings and proposed checks remain unverified.';
   }catch(error){$('result').textContent='No successful report.';$('status').textContent=error.message;}finally{lockInputs(false);$('preview').disabled=false;$('investigate').disabled=previewSignature!==signature();}
 });
 $('export').addEventListener('click',()=>{if(!report)return;const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='devtwin-investigation.json';link.click();URL.revokeObjectURL(url);});
-$('task').addEventListener('input',clearPatch);
+for(const [id,event] of [['task','input'],['workflow','change']])$(id).addEventListener(event,()=>{clearResults();$('consent').checked=false;$('status').textContent='Task or workflow changed. Review and approve submission again.';});
 $('propose').addEventListener('click',async()=>{
   if(previewSignature!==signature()||!$('consent').checked){$('status').textContent='Preview current files and approve provider submission first.';return;}
   clearPatch();lockInputs(true);$('status').textContent='Proposing a change; no tests or edits are running…';
@@ -75,7 +76,7 @@ $('download-patch').addEventListener('click',async()=>{
   try{const result=await request('/api/export',{archive,selected:selection(),patch:proposal.patch,approved:true});
     const bytes=Uint8Array.from(atob(result.archive),char=>char.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:'application/zip'}));
     const link=document.createElement('a');link.href=url;link.download='devtwin-selected-candidate.zip';link.click();URL.revokeObjectURL(url);
-    $('status').textContent='Selected-file candidate exported. No tests ran and the original upload is unchanged.';
+    $('status').textContent='Selected-file candidate exported. Export performed no additional tests; the original upload is unchanged.';
   }catch(error){$('status').textContent=error.message;}finally{lockInputs(false);$('download-patch').disabled=!proposal;$('approve-patch').disabled=!proposal;}
 });
 $('verify').addEventListener('click',async()=>{
@@ -87,9 +88,10 @@ $('verify').addEventListener('click',async()=>{
 });
 $('repair').addEventListener('click',async()=>{
   if(previewSignature!==signature()||!$('consent').checked||!$('approve-loop').checked){$('status').textContent='Preview files and approve provider submission and the bounded repair loop first.';return;}
-  clearPatch();lockInputs(true);$('export').disabled=true;$('status').textContent='Running bounded investigation, candidate generation and isolated checks…';$('repair-result').textContent='Repair pending.';
+  clearResults();lockInputs(true);$('export').disabled=true;$('status').textContent='Running bounded investigation, candidate generation and isolated checks…';$('repair-result').textContent='Repair pending.';
   try{const result=await request('/api/repair',{archive,selected:selection(),task:$('task').value,workflow:$('workflow').value,consent:true,public_input_confirmed:publicInputRequired,provider,loop_approved:true});
     report=result;$('repair-result').textContent=JSON.stringify(result,null,2);$('export').disabled=false;
+    $('result').textContent=JSON.stringify(result.analysis,null,2);
     const last=result.attempts?.at(-1);
     if(last&&result.patch){proposal=last.proposal;$('patch').textContent=`${proposal.explanation}\n\n${proposal.diff}\n\nComplete replacement for ${proposal.patch.path}:\n${proposal.patch.replacement}`;$('verification').textContent=JSON.stringify(last.verification,null,2);}
     $('status').textContent=`${result.reason || `Repair ${result.status}.`} Review the evidence and final replacement before export.`;
