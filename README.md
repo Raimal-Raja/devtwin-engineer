@@ -28,3 +28,5 @@ Python 3.10+ is required; core local checks use no third-party dependencies. The
 Run the standalone app locally with the [Dockerized app and private verification worker](docs/docker.md). The local repair flow has passed real original/candidate Python tests; the public catalog is separate from this backend.
 
 The local [bounded repair loop](docs/repair-loop.md) connects investigation, proposal, isolated checks and one failure-driven retry. [Free hosting prerequisites](docs/free-hosting.md) track the remaining hosted-service requirements.
+
+[OpenRouter Free](docs/openrouter.md) is supported with zero-price routing controls and an operator-configured key. Run `python scripts/start_openrouter.py` to perform a synthetic smoke check and start the localhost Docker app without saving the key to a file.

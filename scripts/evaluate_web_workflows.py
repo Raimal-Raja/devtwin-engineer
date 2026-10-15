@@ -17,6 +17,8 @@ def main():
     parser.add_argument('--approve-provider', action='store_true', required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--workflow', help='Run one registered workflow for diagnosis')
+    parser.add_argument('--continue-validation-errors', action='store_true',
+                        help='Check other workflows after rejected answers; never retry a workflow or continue on transport/quota failure')
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     if args.output.exists():
@@ -54,11 +56,16 @@ def main():
         except ProviderError as exc:
             results.append({'workflow': entry['id'], 'schema_and_citations_passed': False,
                             'fixture': fixture.name, 'error': str(exc), 'rejected_synthetic_response': captured})
-            # Quota/transport errors stop the run; do not retry or change providers.
-            break
+            # Only independently test the next case after an answer-validation
+            # rejection. Quota, upstream and transport failures always stop.
+            validation_error = (str(exc).startswith('Investigation response failed')
+                                or str(exc).startswith('Provider returned an unfinished')
+                                or str(exc).startswith('Provider returned an invalid, empty'))
+            if not args.continue_validation_errors or not validation_error:
+                break
         args.output.write_text(json.dumps({'provider': provider['id'], 'results': results,
             'limitations': 'Development source analysis only; no runtime or effectiveness certificate'}, indent=2), encoding='utf-8')
-        print(json.dumps({'workflow': entry['id'], 'schema_and_citations_passed': True}), flush=True)
+        print(json.dumps({'workflow': entry['id'], 'schema_and_citations_passed': results[-1]['schema_and_citations_passed']}), flush=True)
         # At most five submissions per minute; sleep never exceeds 13 seconds.
         time.sleep(max(0, 13 - (time.monotonic() - started)))
     args.output.write_text(json.dumps({'provider': provider['id'], 'results': results,

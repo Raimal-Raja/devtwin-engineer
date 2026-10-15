@@ -76,6 +76,14 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(self.call('/api/repair', {**self.data, 'loop_approved': True})[0], 429)
         self.analyze.assert_called_once()
 
+    def test_openrouter_collection_requires_public_input_confirmation(self):
+        with patch.dict(os.environ, {'DEVTWIN_PROVIDER': 'openrouter', 'DEVTWIN_OPENROUTER_DATA_POLICY': 'allow'}):
+            data = {**self.data, 'provider': 'openrouter'}
+            self.assertEqual(self.call('/api/investigate', data)[0], 400)
+            self.analyze.assert_not_called()
+            self.assertEqual(self.call('/api/investigate', {**data, 'public_input_confirmed': True})[0], 200)
+            self.analyze.assert_called_once()
+
     def test_auth_origin_and_host_reject_before_provider(self):
         for headers, expected in (({'Authorization': 'Bearer invalid'}, 401),
                                   ({'Origin': 'https://evil.example'}, 403),

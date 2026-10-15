@@ -13,7 +13,7 @@ MAX_ENTRIES = 200
 EXTENSIONS = {'.py', '.md', '.toml', '.json', '.txt', '.sql', '.yaml', '.yml'}
 EXCLUDED = {'.git', '.env', '.ssh', '.aws', '.codex', '.claude', '.agents',
             'node_modules', 'venv', '.venv', '__pycache__', 'credentials'}
-SECRET = re.compile(r'nvapi-[A-Za-z0-9_-]{20,}|-----BEGIN .*PRIVATE KEY-----|'
+SECRET = re.compile(r'nvapi-[A-Za-z0-9_-]{20,}|sk-or-v1-[A-Za-z0-9_-]{20,}|-----BEGIN .*PRIVATE KEY-----|'
                     r'(?i:api[_-]?key|password|secret|token)\s*[:=]\s*[\"\']?[^\s\"\']{16,}')
 
 

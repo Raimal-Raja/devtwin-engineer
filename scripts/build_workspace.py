@@ -12,8 +12,8 @@ REFERENCES = ('api-compatibility', 'bug-reproduction', 'change-impact', 'databas
               'delivery-preparation', 'dependency-diagnosis', 'documentation-verification',
               'feature-tracing', 'implementation', 'performance-investigation',
               'regression-testing', 'repository-understanding', 'routing', 'security-review')
-FILES = (('Dockerfile', 'compose.yaml', '.dockerignore', 'scripts/prepare_docker.py',
-          'docs/docker.md', 'docs/repair-loop.md', 'docs/isolated-runner.md', 'docs/free-hosting.md')
+FILES = (('Dockerfile', 'compose.yaml', '.dockerignore', 'scripts/prepare_docker.py', 'scripts/start_openrouter.py',
+          'docs/docker.md', 'docs/repair-loop.md', 'docs/isolated-runner.md', 'docs/free-hosting.md', 'docs/openrouter.md')
          + tuple('backend/' + name for name in BACKEND)
          + tuple('references/' + name + '.md' for name in REFERENCES))
 

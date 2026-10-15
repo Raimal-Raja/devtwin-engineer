@@ -23,6 +23,7 @@ class RunnerTests(unittest.TestCase):
                       'replacement': 'value = 1\n'}
         env = patch.dict(os.environ, {'DEVTWIN_RUNNER_IMAGE': 'python@sha256:' + 'a' * 64,
                                       'NVIDIA_API_KEY': 'should-never-reach-runner',
+                                      'OPENROUTER_API_KEY': 'should-never-reach-runner',
                                       'DEVTWIN_SESSION_TOKEN': 'should-never-reach-runner',
                                       'DEVTWIN_GITHUB_TOKEN': 'should-never-reach-runner'})
         env.start()

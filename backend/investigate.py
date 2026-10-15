@@ -32,6 +32,8 @@ def investigate(archive, selected, task, workflow, *, send=complete):
                 'limitations (list of strings). Cite only existing supplied source lines. '
                 'Use a single integer line, never a range, for each finding; no additional keys or Markdown fences. '
                 'Source lines are explicitly numbered as N | text; cite those exact N values within line_count. '
+                'Keep the report concise: at most six findings, six checks and six limitations; '
+                'use one or two sentences per explanation so the JSON fits the output budget. '
                 'Describe changes as proposals; never claim they were applied.\n')
     evidence = [{'path': file['path'], 'sha256': file['sha256'],
                  'line_count': len(file['content'].splitlines()),
@@ -69,6 +71,7 @@ def investigate(archive, selected, task, workflow, *, send=complete):
         raise ProviderError('Investigation response failed schema or source citation validation') from None
     return {'status': 'unverified_source_analysis', 'workflow': workflow,
             'provider': response.get('provider', 'unspecified'), 'model': response.get('model', 'unspecified'),
+            'requested_model': response.get('requested_model', response.get('model', 'unspecified')),
             'executed_commands': [], 'applied_changes': [],
             'sources': [{'path': file['path'], 'sha256': file['sha256']} for file in files],
             'analysis': result,

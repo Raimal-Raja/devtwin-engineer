@@ -9,7 +9,7 @@ The user asked to finish capability prerequisites before deployment, focus on Co
 | Thirteen references | Task/rubric/fixture prerequisites registered | Maintain per-capability limits; independent comparisons remain separate |
 | Internal browser investigation | Authenticated loopback API and UI | Production authentication, usage controls and hosting |
 | GitHub connection | Public commit-pinned selected-file import tested | Live private-token test only if needed; no write access required |
-| LLM provider | NVIDIA internal trial works; Groq/Gemini adapters simulated | Configure/verify a free-plan public-service-compatible provider securely |
+| LLM provider | OpenRouter free Nemotron exercised across thirteen source analyses and a Docker repair loop | Public/synthetic-only policy approved; hosted service terms and deployment still require review |
 | Project execution | Docker installed; live local app/worker repair verification passed | Local setup validated; production worker isolation remains unverified |
 | Repair/test agent loop | Investigation and patch proposal are separate calls | Bounded local investigation/proposal/test/retry loop passed; public jobs remain pending |
 | Claude | Explicitly deferred | Later authenticated runtime evaluation; not a Codex deployment blocker |

@@ -18,6 +18,8 @@ The existing NVIDIA key remains for internal evaluation. [NVIDIA trial terms](ht
 
 ## Deployment gates
 
+OpenRouter Free is now integrated and live-tested with an authenticated operator key; see [setup](openrouter.md). The unsuffixed Nemotron Ultra model is paid, so only its `:free` variant and the general free router are allowed. Initial routing/availability failures are preserved in the increment evidence. After approval of public/synthetic-only upstream storage/training, thirteen source analyses and the Docker repair loop passed. Hosted-service validation remains a separate gate.
+
 After the operator supplies a confirmed free VM and a securely configured compatible provider, validate transport authentication, HTTPS, bounded user access and job usage, architecture-compatible pinned images, worker isolation, cleanup and credential boundaries. The current Compose configuration is for dedicated local development and must not be exposed unchanged as a public multi-user service. Do not publish a tunnel to this computer to bypass those requirements.
 
 Provider quotas stop jobs; the application does not buy credits or switch services. Free allowances can change, and the code cannot determine billing status from an API key. Keep licensing undecided and the repository private until the user makes the release decision.

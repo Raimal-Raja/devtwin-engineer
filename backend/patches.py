@@ -71,6 +71,7 @@ def propose(archive, selected, task, *, send=complete):
     return {'status': 'unverified_patch_proposal', 'patch': patch, 'diff': diff,
             'explanation': result['explanation'], 'provider': response.get('provider', 'unspecified'),
             'model': response.get('model', 'unspecified'), 'executed_commands': [], 'applied_changes': [],
+            'requested_model': response.get('requested_model', response.get('model', 'unspecified')),
             'limitations': ['No tests executed; proposal correctness is unverified.',
                             'Review the complete replacement as well as the diff before approval.']}
 

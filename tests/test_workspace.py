@@ -39,6 +39,7 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_secret_binary_missing_and_limits(self):
         for path, content in (('.env', 'x'), ('a.py', 'nvapi-' + 'a' * 30),
+                              ('a.py', 'sk-or-v1-' + 'a' * 30),
                               ('a.exe', 'pass'), ('.ssh/a.py', 'pass'),
                               ('a.py', b'\xff'), ('a.py', 'x\x00'), ('a.py', 'x' * 16001)):
             with self.assertRaises(WorkspaceError):

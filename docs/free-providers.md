@@ -9,6 +9,7 @@ The user's discovery sources were consulted: [public-apis](https://github.com/pu
 | Groq | `openai/gpt-oss-120b` | `DEVTWIN_PROVIDER=groq`, `GROQ_API_KEY` | Free Plan quotas apply. Do not upgrade to Developer billing for the no-cost setup. |
 | Google Gemini | `gemini-3.8-flash` | `DEVTWIN_PROVIDER=gemini`, `GEMINI_API_KEY` | Selected model has unpaid input/output quotas. Use a project without paid billing; no confidential/personal inputs on unpaid services. |
 | NVIDIA | `nvidia/nemotron-3-ultra-550b-a55b` | `DEVTWIN_PROVIDER=nvidia`, `NVIDIA_API_KEY` | Existing internal trial integration; not the public production provider. |
+| OpenRouter Free | `openrouter/free` or `nvidia/nemotron-3-ultra-550b-a55b:free` | `DEVTWIN_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, optional `DEVTWIN_OPENROUTER_MODEL` | Allowlisted free requests with zero-price constraints, no upstream fallback and explicit upstream-provider consent. Actual model recorded. |
 
 The default remains NVIDIA for compatibility. Set `DEVTWIN_PROVIDER` before starting the backend to choose a free-tier alternative. Keys stay in the server environment, never source control or browser assets. No account creation, terms acceptance, billing upgrades or provider-key storage was performed. The application cannot determine the billing tier from a key: model allowlisting and token limits are not a guarantee against charges if an operator supplies a paid account. Configure and confirm a Free Plan/unpaid project at the provider first.
 
@@ -27,4 +28,4 @@ python -m backend.server --port 8765
 
 The local server additionally requires `DEVTWIN_SESSION_TOKEN`; see [local workspace setup](local-workspace.md). The smoke sends only a fixed development prompt. Neither Groq nor Gemini credentials were configured during this increment, so their live account checks remain pending. Automated adapter tests use simulated responses.
 
-OpenRouter was evaluated but not added: free routing can select different model providers, and low quotas plus provider-specific data policies add complexity. The first implementation favors direct providers with explicit destinations. Additional providers can follow once these are live-tested.
+OpenRouter was added on 2026-10-14 at the user's request. See [OpenRouter setup](openrouter.md). The free-only router's actual model is recorded; provider privacy/parameter restrictions and low quotas may block requests. Live account testing still requires a key configured by the operator. No paid resources or new cloud accounts were enabled.

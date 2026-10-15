@@ -145,6 +145,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.reply(400, {'error': 'Approve submission of nonconfidential selected files first'})
             if data.get('provider') != provider_info()['id']:
                 return self.reply(400, {'error': 'Preview and approve the current provider before submission'})
+            if provider_info()['public_input_required'] and data.get('public_input_confirmed') is not True:
+                return self.reply(400, {'error': 'Confirm public or synthetic inputs and upstream data collection before submission'})
             now = time.monotonic()
             self.server.calls = [stamp for stamp in self.server.calls if now - stamp < 60]
             budget = 3 if self.path == '/api/repair' else 1

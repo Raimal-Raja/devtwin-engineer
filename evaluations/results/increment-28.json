@@ -1,0 +1,276 @@
+{
+  "schema": 1,
+  "scope": "Synthetic development evidence; source analysis is not runtime or semantic certification of all capabilities",
+  "provider": "openrouter",
+  "requested_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "input_policy": "Operator-approved public/synthetic only; upstream storage/training permitted",
+  "workflows": [
+    {
+      "id": "repository-understanding",
+      "schema_and_citations_passed": true,
+      "fixture": "checkout",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "checkout.py",
+          "sha256": "8eb380392aaead2e27407a2f3347b99c15229110f8401df02f95fe75bde618a7"
+        },
+        {
+          "path": "test_checkout.py",
+          "sha256": "deb4492d9e5de8989ee815cf1db49c407cb93f3fdede0046949d65296a1a0481"
+        }
+      ]
+    },
+    {
+      "id": "feature-tracing",
+      "schema_and_citations_passed": true,
+      "fixture": "order_flow",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "billing.py",
+          "sha256": "6aab744936124590d3f23369d8e2260b6c23496fbbe9a2a5efff3dc4428dd6ed"
+        },
+        {
+          "path": "delivery.py",
+          "sha256": "5059f0391e44fd22d344343530d991f5d217965ec3582c5bcd08d1bd4a13fab6"
+        },
+        {
+          "path": "exports.py",
+          "sha256": "fb4565381d01e28d7940934cd7b7ae88606c2ef17f686cbeac018576ffadf29c"
+        },
+        {
+          "path": "pricing.py",
+          "sha256": "7906b14e896aa28f47c1b2d570915d7156b3f2ea8b8789c51b36c6069b19a8bf"
+        },
+        {
+          "path": "service.py",
+          "sha256": "173c7a764811b8b249f27210c777a95894d4fa91f93946ecef3055b4164543f1"
+        },
+        {
+          "path": "test_orders.py",
+          "sha256": "e00a96ed0dd7c9b2e7368db4e9b0eab42fd3d02058d9177f43cf6a521e4748ed"
+        }
+      ]
+    },
+    {
+      "id": "change-impact",
+      "schema_and_citations_passed": true,
+      "fixture": "order_flow",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "billing.py",
+          "sha256": "6aab744936124590d3f23369d8e2260b6c23496fbbe9a2a5efff3dc4428dd6ed"
+        },
+        {
+          "path": "delivery.py",
+          "sha256": "5059f0391e44fd22d344343530d991f5d217965ec3582c5bcd08d1bd4a13fab6"
+        },
+        {
+          "path": "exports.py",
+          "sha256": "fb4565381d01e28d7940934cd7b7ae88606c2ef17f686cbeac018576ffadf29c"
+        },
+        {
+          "path": "pricing.py",
+          "sha256": "7906b14e896aa28f47c1b2d570915d7156b3f2ea8b8789c51b36c6069b19a8bf"
+        },
+        {
+          "path": "service.py",
+          "sha256": "173c7a764811b8b249f27210c777a95894d4fa91f93946ecef3055b4164543f1"
+        },
+        {
+          "path": "test_orders.py",
+          "sha256": "e00a96ed0dd7c9b2e7368db4e9b0eab42fd3d02058d9177f43cf6a521e4748ed"
+        }
+      ]
+    },
+    {
+      "id": "bug-reproduction",
+      "schema_and_citations_passed": true,
+      "fixture": "checkout",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "checkout.py",
+          "sha256": "8eb380392aaead2e27407a2f3347b99c15229110f8401df02f95fe75bde618a7"
+        },
+        {
+          "path": "test_checkout.py",
+          "sha256": "deb4492d9e5de8989ee815cf1db49c407cb93f3fdede0046949d65296a1a0481"
+        }
+      ]
+    },
+    {
+      "id": "dependency-diagnosis",
+      "schema_and_citations_passed": true,
+      "fixture": "dependency_conflict",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "requirements.txt",
+          "sha256": "de2df18982b89e00b5d7eada39b94dd7d03127d83a3ffca337b117dba8ce37c6"
+        },
+        {
+          "path": "wheelhouse.py",
+          "sha256": "b1ee45ea30ac1f18cea565daf550c6102e68a1d26896e3d4c96d7bce7b5f14ef"
+        }
+      ]
+    },
+    {
+      "id": "implementation",
+      "schema_and_citations_passed": true,
+      "fixture": "checkout",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "checkout.py",
+          "sha256": "8eb380392aaead2e27407a2f3347b99c15229110f8401df02f95fe75bde618a7"
+        },
+        {
+          "path": "test_checkout.py",
+          "sha256": "deb4492d9e5de8989ee815cf1db49c407cb93f3fdede0046949d65296a1a0481"
+        }
+      ]
+    },
+    {
+      "id": "regression-testing",
+      "schema_and_citations_passed": true,
+      "fixture": "checkout",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "checkout.py",
+          "sha256": "8eb380392aaead2e27407a2f3347b99c15229110f8401df02f95fe75bde618a7"
+        },
+        {
+          "path": "test_checkout.py",
+          "sha256": "deb4492d9e5de8989ee815cf1db49c407cb93f3fdede0046949d65296a1a0481"
+        }
+      ]
+    },
+    {
+      "id": "api-compatibility",
+      "schema_and_citations_passed": true,
+      "fixture": "api_contract",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "client.py",
+          "sha256": "1001bb7f376f18b08acd47b7ed51b719dbd69bed31ebdfd2c3aab0bfe8ff700d"
+        },
+        {
+          "path": "provider.py",
+          "sha256": "315636a5dfeef9d2943987ba993e90f6bf01c808b1430336f1f7edb55d682a6d"
+        },
+        {
+          "path": "test_contract.py",
+          "sha256": "f709f44777de846c61b30c46eeacfddaef622923102fc337d1b0caa72567108e"
+        }
+      ]
+    },
+    {
+      "id": "database-review",
+      "schema_and_citations_passed": true,
+      "fixture": "migration_review",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "candidate.sql",
+          "sha256": "140c7d46261e241daff806458247dbb901ee7ff7b89a2737b9932e6a4699f074"
+        },
+        {
+          "path": "schema.sql",
+          "sha256": "da6e4da5fe6e2e623c1d8b7f869e6d07fc6b6600828c6f74534043cdaf36b4e2"
+        },
+        {
+          "path": "test_migration.py",
+          "sha256": "a16769becef695014351ac90130b0713fd2cb81cbbfb20eb3b2a4a747ae68d8d"
+        },
+        {
+          "path": "unsafe.sql",
+          "sha256": "85c3e5057db898b2cbba2cc2fccc8e7172e3a07189172f068db28c8cf2c099d7"
+        }
+      ]
+    },
+    {
+      "id": "security-review",
+      "schema_and_citations_passed": true,
+      "fixture": "ownership_review",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "orders.py",
+          "sha256": "6de60c6e845d586d886e44edcd5fe78b5f914365a5922272be9e46e68d34d4af"
+        },
+        {
+          "path": "test_ownership.py",
+          "sha256": "31c7ab754270c2317ed96c388f1c25aebed0ff36cf40db80dc68faf8a1c204cf"
+        }
+      ]
+    },
+    {
+      "id": "performance-investigation",
+      "schema_and_citations_passed": true,
+      "fixture": "performance_review",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "measure.py",
+          "sha256": "2e0bc4df8a08588e077d6c21aecf30a64b5f95fdf4171f40ac5e6569a1b1e816"
+        },
+        {
+          "path": "sales.py",
+          "sha256": "8b9f3e668b8586d64b2063d79cc5c3b5e98c3e0862ccc01d1a142801e4dbcf6f"
+        },
+        {
+          "path": "test_sales.py",
+          "sha256": "201fc297570b883b76d4db02efba6da1c0ac56ee955b15291ed63224fc2e3efc"
+        }
+      ]
+    },
+    {
+      "id": "documentation-verification",
+      "schema_and_citations_passed": true,
+      "fixture": "documentation_review",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "README.md",
+          "sha256": "cb46faa5b7fe9d65ac78f239cccc6b81d21b3d9cd410ffa0e33012ac7f691d74"
+        },
+        {
+          "path": "cli.py",
+          "sha256": "580d7ae1db5a0844e84bea92545ee7b3dc5e62d18ff750ad8da4e6f3ad1ac998"
+        }
+      ]
+    },
+    {
+      "id": "delivery-preparation",
+      "schema_and_citations_passed": true,
+      "fixture": "documentation_review",
+      "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "source_hashes": [
+        {
+          "path": "README.md",
+          "sha256": "cb46faa5b7fe9d65ac78f239cccc6b81d21b3d9cd410ffa0e33012ac7f691d74"
+        },
+        {
+          "path": "cli.py",
+          "sha256": "580d7ae1db5a0844e84bea92545ee7b3dc5e62d18ff750ad8da4e6f3ad1ac998"
+        }
+      ]
+    }
+  ],
+  "repair": {
+    "status": "passed",
+    "attempts": 1,
+    "baseline_tests": 5,
+    "baseline_errors": 2,
+    "candidate_tests": 5,
+    "candidate_failures": 0,
+    "candidate_errors": 0,
+    "observed_failure_resolved": true,
+    "applied_changes": []
+  }
+}

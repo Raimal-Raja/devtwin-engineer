@@ -25,3 +25,5 @@ docker compose --env-file .env.docker -p devtwin-engineer down
 ```
 
 Do not print resolved Compose configuration or container environment variables when collecting diagnostics; those contain credentials. Docker installation and local execution do not establish a free public hosting plan.
+
+For free-only OpenRouter inference, use the hidden-key [OpenRouter setup helper](openrouter.md). It selects the provider explicitly and keeps the key out of project files.
