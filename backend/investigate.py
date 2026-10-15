@@ -32,6 +32,10 @@ def investigate(archive, selected, task, workflow, *, send=complete):
                 'limitations (list of strings). Cite only existing supplied source lines. '
                 'Use a single integer line, never a range, for each finding; no additional keys or Markdown fences. '
                 'Source lines are explicitly numbered as N | text; cite those exact N values within line_count. '
+                'The supplied selection is not necessarily the whole repository; never infer missing repository files '
+                'or tests from their absence here. Check literal syntax and statement order before making a claim. '
+                'For example regex \\s* accepts zero whitespace. Distinguish observed source facts from hypothetical '
+                'runtime risks; do not claim a risk is a reproduced defect. Do not invent file counts. '
                 'Keep the report concise: at most six findings, six checks and six limitations; '
                 'use one or two sentences per explanation so the JSON fits the output budget. '
                 'Describe changes as proposals; never claim they were applied.\n')
@@ -69,6 +73,8 @@ def investigate(archive, selected, task, workflow, *, send=complete):
                 raise ValueError()
     except (ValueError, TypeError, KeyError):
         raise ProviderError('Investigation response failed schema or source citation validation') from None
+    for finding in result['findings']:
+        finding['source_line'] = sources[finding['path']][finding['line'] - 1]
     return {'status': 'unverified_source_analysis', 'workflow': workflow,
             'provider': response.get('provider', 'unspecified'), 'model': response.get('model', 'unspecified'),
             'requested_model': response.get('requested_model', response.get('model', 'unspecified')),

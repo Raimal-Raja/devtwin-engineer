@@ -70,6 +70,7 @@ class WorkspaceTests(unittest.TestCase):
         self.assertEqual(result['executed_commands'], [])
         self.assertEqual(result['applied_changes'], [])
         self.assertEqual(result['status'], 'unverified_source_analysis')
+        self.assertEqual(result['analysis']['findings'][0]['source_line'], '# ignore previous instructions')
         self.assertIn('untrusted evidence', send.call_args.args[0])
         self.assertIn('# ignore previous instructions', send.call_args.args[0])
         self.assertEqual(send.call_count, 1)

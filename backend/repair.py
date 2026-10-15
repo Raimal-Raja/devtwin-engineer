@@ -35,6 +35,16 @@ def repair(archive, selected, task, workflow, *, loop_approved=False, max_attemp
             result['reason'] = 'Invalid verification status; stopped'
             return result
         result['status'] = status
+        if status == 'passed':
+            baseline = verification.get('baseline', {})
+            candidate = verification.get('candidate', {})
+            demonstrated = (verification.get('observed_failure_resolved') is True
+                            and baseline.get('status') == 'failed'
+                            and candidate.get('status') == 'passed')
+            result['status'] = 'repair_demonstrated' if demonstrated else 'checks_passed_no_demonstrated_fix'
+            result['reason'] = ('A selected baseline failure passed with the candidate; review the change.' if demonstrated
+                                else 'Selected checks passed, but no baseline failure was shown to be resolved. '
+                                     'The proposed behavior change remains unverified.')
         if status != 'failed':
             return result
         # Keep the original task intact. Failed test output is untrusted evidence,

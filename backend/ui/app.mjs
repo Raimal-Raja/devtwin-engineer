@@ -92,6 +92,6 @@ $('repair').addEventListener('click',async()=>{
     report=result;$('repair-result').textContent=JSON.stringify(result,null,2);$('export').disabled=false;
     const last=result.attempts?.at(-1);
     if(last&&result.patch){proposal=last.proposal;$('patch').textContent=`${proposal.explanation}\n\n${proposal.diff}\n\nComplete replacement for ${proposal.patch.path}:\n${proposal.patch.replacement}`;$('verification').textContent=JSON.stringify(last.verification,null,2);}
-    $('status').textContent=`Repair ${result.status}. Review the evidence and final replacement before export.`;
+    $('status').textContent=`${result.reason || `Repair ${result.status}.`} Review the evidence and final replacement before export.`;
   }catch(error){$('repair-result').textContent='No successful repair report.';$('status').textContent=error.message;}finally{lockInputs(false);}
 });

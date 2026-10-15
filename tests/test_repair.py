@@ -36,7 +36,7 @@ class RepairTests(unittest.TestCase):
 
     def test_pass_stops_and_keeps_host_changes_empty(self):
         result = self.run_loop(loop_approved=True)
-        self.assertEqual(result['status'], 'passed')
+        self.assertEqual(result['status'], 'checks_passed_no_demonstrated_fix')
         self.assertEqual(result['applied_changes'], [])
         self.assertEqual(len(result['attempts']), 1)
         self.verify.assert_called_once_with(self.archive, self.selected, self.patch,
@@ -45,11 +45,18 @@ class RepairTests(unittest.TestCase):
     def test_failed_candidate_retries_against_original_source(self):
         self.verify.side_effect = [{'status': 'failed', 'candidate': {'log': 'value mismatch'}}, {'status': 'passed'}]
         result = self.run_loop(loop_approved=True)
-        self.assertEqual(result['status'], 'passed')
+        self.assertEqual(result['status'], 'checks_passed_no_demonstrated_fix')
         self.assertEqual(len(result['attempts']), 2)
         self.assertEqual(self.propose.call_args_list[1].args[:2], (self.archive, self.selected))
         self.assertIn('untrusted evidence', self.propose.call_args_list[1].args[2])
         self.analyze.assert_called_once()
+
+    def test_only_baseline_failure_resolved_demonstrates_repair(self):
+        self.verify.return_value = {'status': 'passed', 'observed_failure_resolved': True,
+                                   'baseline': {'status': 'passed'}, 'candidate': {'status': 'passed'}}
+        self.assertEqual(self.run_loop(loop_approved=True)['status'], 'checks_passed_no_demonstrated_fix')
+        self.verify.return_value['baseline']['status'] = 'failed'
+        self.assertEqual(self.run_loop(loop_approved=True)['status'], 'repair_demonstrated')
 
     def test_blocked_runtime_and_provider_failure_stop(self):
         self.verify.return_value = {'status': 'blocked'}
