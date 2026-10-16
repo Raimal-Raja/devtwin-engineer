@@ -2,13 +2,25 @@
 
 # DevTwin Engineer
 
-### Understand the code. Review the change. Verify the result.
+### One workspace for AI code investigation, reviewed repairs, and test evidence.
 
-**An AI code investigation and repair workspace with 13 engineering workflows, GitHub imports, Docker test verification, and Codex / Claude Code skills and plugins.**
+**Understand a repository. Trace the problem. Review the change. Verify the result.**
 
-[Workflows](#13-engineering-workflows) · [Quick start](#run-locally) · [Docker Hub](#docker-hub-images) · [Agent setup](#skills-and-plugins) · [Project status](docs/completion-status.md)
+[![Docker Hub: public app and worker images](docs/assets/docker-badge.svg)](https://hub.docker.com/r/raimalraja/devtwin-engineer)
+[![Engineering workflows: 13](docs/assets/workflows-badge.svg)](#13-engineering-workflows)
+[![Status: development candidate](docs/assets/status-badge.svg)](#current-evidence-and-boundaries)
 
-**Local web application · Evidence reports · Reviewed patches · Isolated Python tests**
+**[Docker Hub](https://hub.docker.com/r/raimalraja/devtwin-engineer) · [Setup guide](docs/installation.md) · [Verification evidence](docs/completion-status.md)**
+
+[Quick start](#run-locally) · [How it works](#three-views-one-connected-workspace) · [13 workflows](#13-engineering-workflows) · [Skills and plugins](#skills-and-plugins) · [FAQ](#faq) · [Documentation](#documentation)
+
+<code>python scripts/start_openrouter.py</code>
+
+<br /><br />
+
+<img src="docs/assets/devtwin-overview.svg" alt="DevTwin product illustration: inspect selected source, investigate with 13 workflows, and review patches with Docker test evidence" width="1080" />
+
+<sub>Product illustration · Selected-file analysis · Python unittest verification · Local execution backend</sub>
 
 </div>
 
@@ -35,6 +47,40 @@ Use the browser workspace independently of a Codex or Claude installation, or in
 [Open the full-size workflow diagram](docs/assets/workflow.svg). This is a bundled SVG image, so it does not require Mermaid support.
 
 GitHub imports are **read-only and pinned to a commit**. The web app does not push changes, open pull requests, or apply generated patches to your original repository.
+
+## Choose your interface
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### Browser workspace
+
+Connect selected GitHub files or a ZIP. Inspect source, run investigations, review patches, and approve Docker verification.
+
+[Run locally](#run-locally)
+
+</td>
+<td width="33%" valign="top">
+
+### Codex skill / plugin
+
+Bring shared engineering instructions into an existing project. Project skill execution and plugin discovery have been exercised.
+
+[Codex setup](integrations/codex/README.md)
+
+</td>
+<td width="33%" valign="top">
+
+### Claude Code package
+
+Use the same canonical skill resources. Native package validation passed; model execution remains deferred.
+
+[Claude Code setup](integrations/claude-code/README.md)
+
+</td>
+</tr>
+</table>
 
 ## 13 engineering workflows
 
@@ -163,6 +209,50 @@ Follow the [plugin setup guide](docs/plugins-and-web.md), [Codex adapter](integr
 | **Release** | Public Docker development images are available; the source repository remains private. License and formal release remain undecided; no open-source license is currently granted. |
 
 Selected files and workflow state are held in memory; refreshing loses the session state. Submit only inputs approved for the displayed provider policy.
+
+## FAQ
+
+<details>
+<summary><strong>Do I need Codex or Claude to use the web app?</strong></summary>
+
+No. The local browser workspace uses its own backend and configured provider. Docker is required for isolated verification. Agent skills and plugins are separate interfaces.
+
+</details>
+
+<details>
+<summary><strong>Does Run all 13 automatically repair my repository?</strong></summary>
+
+No. It queues source investigations with separate approval for up to 13 model calls. Patch review, export, test execution, and bounded repair have their own controls and approvals.
+
+</details>
+
+<details>
+<summary><strong>Does DevTwin upload my code?</strong></summary>
+
+Approved source investigations send the selected files and task to the configured model provider. Review the displayed policy before submitting. The storage/training-enabled free route is restricted to public or synthetic inputs. Docker test execution has no network access.
+
+</details>
+
+<details>
+<summary><strong>Can I analyze an entire repository?</strong></summary>
+
+The current web app analyzes explicit selections: up to 30 UTF-8 files and 16,000 total selected bytes. It is not a full-repository indexer. Import diagnostics explain omitted files.
+
+</details>
+
+<details>
+<summary><strong>Can I use the Docker Hub images immediately?</strong></summary>
+
+You can pull both public images now. Running the complete workspace also requires app/worker configuration, tokens, a provider key, and the pinned test image. The source Compose file builds locally by default. See [Docker setup](docs/docker.md).
+
+</details>
+
+<details>
+<summary><strong>Is DevTwin production-ready or open source?</strong></summary>
+
+It is a development candidate with tested local flows and public Docker images. Hosted multi-user execution, broader independent evaluation, and formal release remain pending. The source repository is private and licensing remains undecided.
+
+</details>
 
 ## Development checks
 

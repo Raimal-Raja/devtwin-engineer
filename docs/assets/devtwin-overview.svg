@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="510" viewBox="0 0 1080 510" role="img" aria-labelledby="title desc">
+<title id="title">DevTwin Engineer product overview</title>
+<desc id="desc">An illustration of three connected capabilities: selected source inspection, thirteen engineering investigations, and reviewed changes with isolated test evidence. This is an illustration, not a live screenshot.</desc>
+<defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#24483d" stroke-width="0.5"/></pattern></defs>
+<rect width="1080" height="510" rx="24" fill="#102d28"/>
+<rect width="1080" height="510" rx="24" fill="url(#grid)"/>
+<g font-family="Arial,Helvetica,sans-serif">
+<rect x="34" y="30" width="1012" height="450" rx="16" fill="#f8f7f0"/>
+<path d="M50 30H1030Q1046 30 1046 46V92H34V46Q34 30 50 30" fill="#e8ede5"/>
+<circle cx="59" cy="61" r="5" fill="#e99a6e"/><circle cx="77" cy="61" r="5" fill="#c9b968"/><circle cx="95" cy="61" r="5" fill="#6a9e85"/>
+<text x="128" y="67" fill="#164535" font-size="18" font-weight="700">DEVTWIN / ENGINEER</text>
+<text x="723" y="66" fill="#426453" font-size="14">Explore → Investigate → Verify</text>
+<text x="66" y="136" fill="#92603c" font-size="12" font-weight="700" letter-spacing="2">YOUR CODE. YOUR REVIEW. YOUR EVIDENCE.</text>
+<text x="66" y="178" fill="#183e30" font-size="32" font-weight="700">Make the next change with context.</text>
+<text x="66" y="207" fill="#52695b" font-size="16">Selected-source investigations and a bounded, approval-based repair process.</text>
+<g fill="#fff" stroke="#d9e1d7"><rect x="66" y="239" width="296" height="181" rx="12"/><rect x="392" y="239" width="296" height="181" rx="12"/><rect x="718" y="239" width="296" height="181" rx="12"/></g>
+<g fill="#b76536" font-size="12" font-weight="700" letter-spacing="1"><text x="86" y="267">01 / INSPECT</text><text x="412" y="267">02 / INVESTIGATE</text><text x="738" y="267">03 / VERIFY</text></g>
+<g fill="#183e30" font-size="21" font-weight="700"><text x="86" y="301">Know the selection.</text><text x="412" y="301">Ask better questions.</text><text x="738" y="301">Review the result.</text></g>
+<g fill="#52695b" font-size="15"><text x="86" y="333">GitHub repository or project ZIP</text><text x="86" y="359">Source preview and file hashes</text><text x="86" y="385">Explicit scope and import limits</text><text x="412" y="333">13 engineering workflows</text><text x="412" y="359">Findings, citations, unknowns</text><text x="412" y="385">Individual or sequential batch</text><text x="738" y="333">Diff and replacement review</text><text x="738" y="359">Isolated Python unittest checks</text><text x="738" y="385">Approved selected-file export</text></g>
+<text x="66" y="453" fill="#52695b" font-size="13">Local web app + Codex skill/plugin + Claude Code package · Product illustration</text>
+</g></svg>
