@@ -6,7 +6,7 @@
 
 **An AI code investigation and repair workspace with 13 engineering workflows, GitHub imports, Docker test verification, and Codex / Claude Code skills and plugins.**
 
-[Workflows](#13-engineering-workflows) · [Quick start](#run-locally) · [Agent setup](#skills-and-plugins) · [Project status](docs/completion-status.md)
+[Workflows](#13-engineering-workflows) · [Quick start](#run-locally) · [Docker Hub](#docker-hub-images) · [Agent setup](#skills-and-plugins) · [Project status](docs/completion-status.md)
 
 **Local web application · Evidence reports · Reviewed patches · Isolated Python tests**
 
@@ -30,15 +30,9 @@ Use the browser workspace independently of a Codex or Claude installation, or in
 | **Project Explorer** | Import GitHub files or a ZIP, inspect source and SHA-256 hashes, review selection sizes, and see why files were omitted. |
 | **Workflow board** | Run investigations, review reports, propose a patch, approve export, compare tests in Docker, or run a bounded repair loop. |
 
-```mermaid
-flowchart LR
-    A[GitHub or ZIP] --> B[Select and preview]
-    B --> C[Approve investigation]
-    C --> D[Review evidence]
-    D --> E[Review patch]
-    E --> F[Approve Docker checks]
-    F --> G[Review results and export]
-```
+![DevTwin workflow: connect and preview, investigate source, review evidence, review a patch, verify in Docker, and export](docs/assets/workflow.svg)
+
+[Open the full-size workflow diagram](docs/assets/workflow.svg). This is a bundled SVG image, so it does not require Mermaid support.
 
 GitHub imports are **read-only and pinned to a commit**. The web app does not push changes, open pull requests, or apply generated patches to your original repository.
 
@@ -109,6 +103,29 @@ Open **[http://127.0.0.1:8765/](http://127.0.0.1:8765/)**. Enter `DEVTWIN_SESSIO
 
 Free-only routing prevents intentional paid-model fallback. Provider capacity, quotas, and continued free availability are external constraints. See [OpenRouter setup](docs/openrouter.md), [Docker instructions](docs/docker.md), and [free hosting prerequisites](docs/free-hosting.md).
 
+## Docker Hub images
+
+**[View DevTwin Engineer on Docker Hub](https://hub.docker.com/r/raimalraja/devtwin-engineer)** — public app and verification-worker images are available now.
+
+```sh
+docker pull raimalraja/devtwin-engineer:app
+docker pull raimalraja/devtwin-engineer:worker
+```
+
+| Component | Moving tag | Commit-specific tag |
+| --- | --- | --- |
+| Browser backend and UI | `raimalraja/devtwin-engineer:app` | `raimalraja/devtwin-engineer:app-ed18167` |
+| Private Docker verification worker | `raimalraja/devtwin-engineer:worker` | `raimalraja/devtwin-engineer:worker-ed18167` |
+
+Both published images target **Linux/amd64**. Use the published digests for immutable references:
+
+```text
+App:    raimalraja/devtwin-engineer@sha256:5a213bf3e081ca5e4a79ca6a6d56658ef0fd9e4b60781de5d069e54d71f54ed6
+Worker: raimalraja/devtwin-engineer@sha256:d91d0113b7f8e96e2a85e469b551bbb4184f268d1fea0a83093554a54addbdb1
+```
+
+Pulling an image downloads the packaged component; the full workspace still needs the app/worker network, session and worker tokens, pinned test-runner image, and provider configuration described in [Docker setup](docs/docker.md). The current `compose.yaml` builds from source by default. These image references can be used in an operator-managed Compose configuration; they do not embed API keys or session tokens. Keep the worker private because it controls the Docker daemon.
+
 ## Skills and plugins
 
 Install the canonical skill into an existing project:
@@ -143,7 +160,7 @@ Follow the [plugin setup guide](docs/plugins-and-web.md), [Codex adapter](integr
 | **Isolation** | Disposable containers with no network, bounded resources/output/time, and no host source mounts or provider credentials. The private worker controls a Docker daemon; public multi-user sandbox hardening is pending. |
 | **Evidence quality** | Schema and citation bounds are validated; semantic correctness is not guaranteed. Source analysis alone runs no tests. |
 | **Hosting** | The public catalog/setup site is separate from the local execution backend. Public backend deployment remains pending. |
-| **Release** | Private development candidate. License and formal release remain undecided; no open-source license is currently granted. |
+| **Release** | Public Docker development images are available; the source repository remains private. License and formal release remain undecided; no open-source license is currently granted. |
 
 Selected files and workflow state are held in memory; refreshing loses the session state. Submit only inputs approved for the displayed provider policy.
 

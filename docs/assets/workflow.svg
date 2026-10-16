@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="440" viewBox="0 0 1080 440" role="img" aria-labelledby="title desc">
+  <title id="title">DevTwin engineering workflow</title>
+  <desc id="desc">Connect selected GitHub or ZIP files, investigate with 13 workflows, review a patch, approve isolated Docker checks, then review evidence and export. Source investigations do not execute tests.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#a7c0b8" stroke-width="1.5"/></marker>
+  </defs>
+  <rect width="1080" height="440" rx="24" fill="#102d28"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="44" y="55" fill="#f4b37c" font-size="15" font-weight="700" letter-spacing="2">DEVTWIN ENGINEER</text>
+    <text x="44" y="99" fill="#ffffff" font-size="32" font-weight="700">From selected source to reviewed evidence</text>
+    <text x="44" y="132" fill="#c7d8d2" font-size="17">13 investigation workflows. Explicit approvals. Inspectable results.</text>
+    <g fill="#1c4038" stroke="#477267" stroke-width="1.5">
+      <rect x="44" y="177" width="300" height="87" rx="12"/>
+      <rect x="390" y="177" width="300" height="87" rx="12"/>
+      <rect x="736" y="177" width="300" height="87" rx="12"/>
+      <rect x="44" y="305" width="300" height="87" rx="12"/>
+      <rect x="390" y="305" width="300" height="87" rx="12"/>
+      <rect x="736" y="305" width="300" height="87" rx="12"/>
+    </g>
+    <g fill="none" stroke="#a7c0b8" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M349 220H380"/><path d="M695 220H726"/>
+      <path d="M886 270V285H194V295"/>
+      <path d="M349 348H380"/><path d="M695 348H726"/>
+    </g>
+    <g fill="#ffffff" font-size="20" font-weight="700">
+      <text x="64" y="211">01 / Connect and preview</text>
+      <text x="410" y="211">02 / Investigate source</text>
+      <text x="756" y="211">03 / Review evidence</text>
+      <text x="64" y="339">04 / Review a patch</text>
+      <text x="410" y="339">05 / Verify in Docker</text>
+      <text x="756" y="339">06 / Review and export</text>
+    </g>
+    <g fill="#c7d8d2" font-size="15">
+      <text x="64" y="240">Read-only GitHub import or ZIP</text>
+      <text x="410" y="240">Selected files, approved submission</text>
+      <text x="756" y="240">Findings, citations, limitations</text>
+      <text x="64" y="368">Diff and full replacement</text>
+      <text x="410" y="368">Approved original/candidate tests</text>
+      <text x="756" y="368">Your original repository stays intact</text>
+    </g>
+  </g>
+</svg>
