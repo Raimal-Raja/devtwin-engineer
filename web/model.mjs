@@ -29,7 +29,7 @@ export function setupPlan(runtime='codex',mode='plugin',os='windows') {
     next:runtime==='codex'?'Open a fresh Codex session in your project and invoke $devtwin-engineer.':'Open a fresh Claude Code session in your project and invoke /devtwin-engineer.'};
   return {
     download:'downloads/devtwin-engineer-plugin.zip',filename:'devtwin-engineer-plugin.zip',
-    commands:runtime==='codex'?'codex plugin marketplace add ./devtwin-engineer-marketplace':
+    commands:runtime==='codex'?'codex plugin marketplace add ./devtwin-engineer-marketplace\ncodex plugin add devtwin-engineer@devtwin-engineer-local':
       '/plugin marketplace add ./devtwin-engineer-marketplace\n/plugin install devtwin-engineer@devtwin-engineer-local',
     instructions:runtime==='codex'?'Extract the plugin ZIP. From its parent folder, add the local marketplace. Open the Plugins browser, select DevTwin Engineer, and install it.':'Extract the plugin ZIP. Start Claude Code in its parent folder, then add the marketplace and install the plugin using the commands below.',
     next:runtime==='codex'?'Start a fresh Codex session and select the installed DevTwin Engineer skill.':'Start a fresh Claude Code session and invoke /devtwin-engineer:devtwin-engineer.'};

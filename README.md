@@ -10,7 +10,7 @@
 [![Engineering workflows: 13](docs/assets/workflows-badge.svg)](#13-engineering-workflows)
 [![Status: development candidate](docs/assets/status-badge.svg)](#current-evidence-and-boundaries)
 
-**[Docker Hub](https://hub.docker.com/r/raimalraja/devtwin-engineer) · [Setup guide](docs/installation.md) · [Verification evidence](docs/completion-status.md)**
+**[Website](https://raimal-raja.github.io/devtwin-engineer/) · [Docker Hub](https://hub.docker.com/r/raimalraja/devtwin-engineer) · [Setup guide](docs/installation.md) · [Verification evidence](docs/completion-status.md)**
 
 [Quick start](#run-locally) · [How it works](#three-views-one-connected-workspace) · [13 workflows](#13-engineering-workflows) · [Skills and plugins](#skills-and-plugins) · [FAQ](#faq) · [Documentation](#documentation)
 
@@ -293,5 +293,6 @@ Start with [practical use cases](docs/use-cases.md) to choose a workflow, then f
 - [Canonical skill](SKILL.md) and [13 capability prerequisites](docs/capability-prerequisites.md)
 - [Installation](docs/installation.md) and [supported environments](docs/supported-environments.md)
 - [Repair loop](docs/repair-loop.md) and [evaluation procedure](docs/evaluation.md)
+- [GitHub Pages deployment](docs/github-pages.md)
 - [Completion status](docs/completion-status.md), [deployment readiness](docs/deployment-readiness.md), and [roadmap](docs/roadmap.md)
 - [GitHub About description and suggested topics](docs/github-about.md)

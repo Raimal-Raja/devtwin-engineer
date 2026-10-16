@@ -45,6 +45,7 @@ def build_web(root, output):
             if source.is_symlink() or not source.is_file():
                 raise ValueError('Missing or linked web source: ' + name)
             shutil.copyfile(source, stage / 'site' / name)
+        (stage / 'site/.nojekyll').write_text('', encoding='utf-8')
         output.mkdir(parents=True, exist_ok=False)
         shutil.copytree(stage / 'site', output, dirs_exist_ok=True)
     return {'directory': str(output), 'plugin_files': plugins['files'],

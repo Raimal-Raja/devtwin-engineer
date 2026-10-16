@@ -27,3 +27,5 @@ Read the [increment-18 evidence](../evaluations/results/increment-18.md) for lim
 The [increment-27 review](increment-27.md) records the latest local repair loop, worker validation, distribution checks and free-hosting blockers.
 
 The [increment-36 handover](project-handover.md) records repository-hosted plugin packaging and the final local validation.
+
+The [GitHub Pages catalog](https://raimal-raja.github.io/devtwin-engineer/) is live with current plugin/skill downloads; see [deployment details](github-pages.md). The local Docker execution backend is separate.

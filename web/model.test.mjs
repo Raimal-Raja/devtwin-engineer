@@ -14,6 +14,7 @@ test('search and category combine without losing matching results',()=>{
 });
 test('plugin setup switches runtime and returns the correct download',()=>{
   assert.match(setupPlan('codex').commands,/codex plugin marketplace add/);
+  assert.match(setupPlan('codex').commands,/codex plugin add devtwin-engineer@devtwin-engineer-local/);
   assert.match(setupPlan('claude-code').commands,/devtwin-engineer@devtwin-engineer-local/);
   assert.match(setupPlan('claude-code').next,/devtwin-engineer:devtwin-engineer/);
 });

@@ -13,6 +13,7 @@ class WebBuildTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / 'web'
             build_web(ROOT, output)
+            self.assertTrue((output / '.nojekyll').is_file())
             self.assertTrue(verify(output / 'downloads/devtwin-engineer-skill.zip')['valid'])
             with zipfile.ZipFile(output / 'downloads/devtwin-engineer-plugin.zip') as archive:
                 for name in ['.agents/plugins/marketplace.json', '.claude-plugin/marketplace.json',
