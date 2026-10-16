@@ -28,7 +28,7 @@ Claude Code, in its interactive session:
 /plugin install devtwin-engineer@devtwin-engineer-local
 ```
 
-Restart the runtime and confirm discovery. Claude runtime testing remains deferred by the owner. Codex native registration/installation/listing was checked in an isolated temporary home, without changing the normal user configuration. Local marketplace checks do not establish remote install availability until the new files are pushed.
+Restart the runtime and confirm discovery. Claude runtime testing remains deferred by the owner. Fresh account-free native validation was attempted, but the official npm executable downloads were incomplete; see the increment report. Current package structure and integrity checks passed. Codex native registration/installation/listing was checked in an isolated temporary home, without changing the normal user configuration. After publication, registration, installation, and enabled-plugin listing also passed directly from the GitHub repository.
 
 The `-local` marketplace name is retained for existing installations, including when its source is GitHub. These are skill-only plugins: no MCP service, subscription, provider key, or Docker backend is installed with them.
 
