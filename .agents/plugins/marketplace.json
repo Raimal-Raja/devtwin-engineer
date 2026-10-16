@@ -1,0 +1,15 @@
+{
+  "interface": {
+    "displayName": "DevTwin Engineer"
+  },
+  "name": "devtwin-engineer-local",
+  "plugins": [
+    {
+      "name": "devtwin-engineer",
+      "source": {
+        "path": "./plugins/devtwin-engineer",
+        "source": "local"
+      }
+    }
+  ]
+}

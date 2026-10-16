@@ -20,8 +20,10 @@ The project includes the shared engineering skill, Codex/Claude plugin packages,
 | Isolated verification integration | Original/candidate Docker command controls, bounded output, approval and honest blocked status | Live baseline/candidate execution and Dockerized app/worker flow passed; broader sandbox audit pending |
 | Web hosting | Platform confirmed the updated deployment after the user confirmed existing public access | Live catalog; public source repository |
 | Independent baseline comparisons/pilot | Existing fixtures are development examples, not held-out trials | Pending before effectiveness claims |
-| License/public release | User chose to keep private until decided | Pending; no public release |
+| License/formal release | Public source, Docker images, and repository marketplace; license undecided | Formal release and licensing pending |
 
 Read the [increment-18 evidence](../evaluations/results/increment-18.md) for limits and earlier failures. A successful private preview does not close deferred Claude, licensing or independent-evaluation gates. Local syntax targets, skipped filesystem cases and platform coverage remain described in the [support matrix](supported-environments.md).
 
 The [increment-27 review](increment-27.md) records the latest local repair loop, worker validation, distribution checks and free-hosting blockers.
+
+The [increment-36 handover](project-handover.md) records repository-hosted plugin packaging and the final local validation.

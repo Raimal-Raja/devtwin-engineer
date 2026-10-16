@@ -1,0 +1,5 @@
+# Generated plugin hashes must remain stable across Windows/Linux checkouts.
+plugins/devtwin-engineer/** -text
+.agents/plugins/marketplace.json -text
+.claude-plugin/marketplace.json -text
+plugin-build-manifest.json -text

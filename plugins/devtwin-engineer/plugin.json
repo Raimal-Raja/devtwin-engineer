@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "name": "Raimal Raja",
+    "url": "https://github.com/Raimal-Raja"
+  },
+  "description": "Evidence-based Python investigation, focused repairs and regression verification.",
+  "name": "devtwin-engineer",
+  "version": "0.0.1"
+}

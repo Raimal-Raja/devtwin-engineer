@@ -77,6 +77,17 @@ def check(root):
     gates.append({'gate': 'package', 'passed': not errors, 'errors': errors})
     if errors:
         return {'passed': False, 'gates': gates}
+    if (root / 'plugin-build-manifest.json').is_file():
+        try:
+            try:
+                from .check_plugin_distribution import check as check_plugins
+            except ImportError:
+                from check_plugin_distribution import check as check_plugins
+            distribution = check_plugins(root)
+            gates.append({'gate': 'plugin_distribution', **distribution})
+        except (OSError, ValueError, UnicodeError):
+            gates.append({'gate': 'plugin_distribution', 'passed': False,
+                          'error': 'Published plugin distribution could not be validated'})
     if (root / 'evaluations/capabilities.json').is_file() or (root / 'backend').is_dir():
         try:
             sys.path.insert(0, str(Path(__file__).resolve().parents[1]))

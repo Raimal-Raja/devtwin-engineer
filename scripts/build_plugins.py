@@ -1,4 +1,4 @@
-"""Build private Codex/Claude plugin marketplaces from the canonical skill bundle."""
+"""Build Codex/Claude plugin marketplaces from the canonical skill bundle."""
 import argparse
 import hashlib
 import json
@@ -32,12 +32,12 @@ def build_plugins(root, output):
                 relative = entry.filename.removeprefix('devtwin-engineer/')
                 payloads['plugins/devtwin-engineer/skills/devtwin-engineer/' + relative] = bundle.read(entry)
         identity = {'name': 'devtwin-engineer', 'version': '0.0.1',
-                    'author': {'name': 'DevTwin Engineer'},
+                    'author': {'name': 'Raimal Raja', 'url': 'https://github.com/Raimal-Raja'},
                     'description': 'Evidence-based Python investigation, focused repairs and regression verification.'}
         portable = dict(identity, **{'$schema': 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'})
         codex = dict(identity, skills='./skills/', interface={
             'displayName': 'DevTwin Engineer', 'shortDescription': 'Investigate code and verify repairs',
-            'longDescription': identity['description'], 'developerName': 'DevTwin Engineer',
+            'longDescription': identity['description'], 'developerName': 'Raimal Raja',
             'category': 'Developer Tools'})
         claude = dict(identity)  # Default skills/ scan; no duplicate custom paths.
         documents = {
@@ -49,7 +49,7 @@ def build_plugins(root, output):
                 'plugins': [{'name': identity['name'], 'source': {
                     'source': 'local', 'path': './plugins/devtwin-engineer'}}]},
             '.claude-plugin/marketplace.json': {
-                'name': 'devtwin-engineer-local', 'owner': {'name': 'DevTwin Engineer'},
+                'name': 'devtwin-engineer-local', 'owner': {'name': 'Raimal Raja'},
                 'plugins': [{'name': identity['name'], 'source': './plugins/devtwin-engineer'}]},
         }
         for name, data in documents.items():

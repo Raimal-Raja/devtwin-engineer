@@ -1,0 +1,17 @@
+{
+  "author": {
+    "name": "Raimal Raja",
+    "url": "https://github.com/Raimal-Raja"
+  },
+  "description": "Evidence-based Python investigation, focused repairs and regression verification.",
+  "interface": {
+    "category": "Developer Tools",
+    "developerName": "Raimal Raja",
+    "displayName": "DevTwin Engineer",
+    "longDescription": "Evidence-based Python investigation, focused repairs and regression verification.",
+    "shortDescription": "Investigate code and verify repairs"
+  },
+  "name": "devtwin-engineer",
+  "skills": "./skills/",
+  "version": "0.0.1"
+}

@@ -1,6 +1,6 @@
 # Incremental roadmap
 
-Current work prioritizes Codex and the standalone browser workspace. Claude execution is deferred by explicit user choice. Completed increments are committed and pushed to the private repository after verification.
+Current work prioritizes Codex and the standalone browser workspace. Claude execution is deferred by explicit user choice. Completed increments are committed and pushed to the public repository after verification.
 
 Implemented and exercised:
 

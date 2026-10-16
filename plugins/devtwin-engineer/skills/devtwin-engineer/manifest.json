@@ -1,0 +1,117 @@
+{
+  "files": {
+    "SKILL.md": {
+      "bytes": 1910,
+      "sha256": "8cfa2ab1cb154668808ab6d3bcb38eca9c7056b5c7205724bbd4b82a10965408"
+    },
+    "docs/package-usage.md": {
+      "bytes": 1903,
+      "sha256": "2e8223f6478ad38859bae55ceaa6b26fa292919c5a8062abcff6d4079b3d571f"
+    },
+    "integrations/claude-code/README.md": {
+      "bytes": 1878,
+      "sha256": "5c878fb15e59ecb80465f679d611a5ad0bc6a006a28877be40c3e94294b9011e"
+    },
+    "integrations/codex/README.md": {
+      "bytes": 2574,
+      "sha256": "6c7a4c4ad7c73e2355a4cd196e82d06869b3d9b5724b9b38907d64917acb573f"
+    },
+    "package-files.json": {
+      "bytes": 960,
+      "sha256": "e451998e5d9dc48984ff3576f33f657be0cebd0fd1f4f355741ad2c3d1e077f2"
+    },
+    "references/api-compatibility.md": {
+      "bytes": 2171,
+      "sha256": "830ee8ae135cfcaac9321976bbed3f58bc02a19800913a4cd66dbb3a70e6a8b3"
+    },
+    "references/bug-reproduction.md": {
+      "bytes": 962,
+      "sha256": "3a3649f4f89789d0970725304978901d8be173292f6813a8fef5890ee5cadd06"
+    },
+    "references/change-impact.md": {
+      "bytes": 2203,
+      "sha256": "3b1881a69ee81f97f0b93723d66bdb505d32fd155db7ea62fab0ce1687c33751"
+    },
+    "references/database-review.md": {
+      "bytes": 2315,
+      "sha256": "4cbab4d7ef2976f35e45fe0eab09adfcbf0ed5a56eb7ea82bef61b3ea543284f"
+    },
+    "references/delivery-preparation.md": {
+      "bytes": 2348,
+      "sha256": "4b3d48b9a601ab1ba4cc45da33d91789d53bdc0ab452da13261bc12cbb0bddf0"
+    },
+    "references/dependency-diagnosis.md": {
+      "bytes": 2214,
+      "sha256": "2aed5dda60d133c68dd5974ce47e997849e6eebae537936da3a2393467384ffa"
+    },
+    "references/documentation-verification.md": {
+      "bytes": 2102,
+      "sha256": "7af263968f2e343cc093675a8f15e41a7a5e9c69ea30decbeb15e3a828c30385"
+    },
+    "references/feature-tracing.md": {
+      "bytes": 2028,
+      "sha256": "340375499459086cd17cc8f72076a3b1e0524a29d1e0d01dce7cd5d6a38959f4"
+    },
+    "references/implementation.md": {
+      "bytes": 886,
+      "sha256": "70d880ac397e82fe8ee0b3c59173ca6d679fdd9db32439dd6b6b19f67b1e000f"
+    },
+    "references/performance-investigation.md": {
+      "bytes": 2304,
+      "sha256": "b62a635f2f41021ef2f88ff398f45fe94a7862b8bd45506b9ce2f94ffc4b22cc"
+    },
+    "references/regression-testing.md": {
+      "bytes": 968,
+      "sha256": "e0211d61409b811e17ff5110ba1c74fe69fe335cd93487f382ad610ed20dfd11"
+    },
+    "references/repository-understanding.md": {
+      "bytes": 1412,
+      "sha256": "2b132ca851f352dc49b59b47b442cd7ce57f0dd865e765ffbf52dfd7ea93b1d5"
+    },
+    "references/routing.md": {
+      "bytes": 1820,
+      "sha256": "7b749710550856c959cfaf7b48332519d4f53fe9aaffb82170d405d66ec44458"
+    },
+    "references/security-review.md": {
+      "bytes": 2277,
+      "sha256": "7776897009ce0deb6a0a14686cba1e5f3c32f279c865cbaa1950485ebd61750a"
+    },
+    "scripts/build_package.py": {
+      "bytes": 4080,
+      "sha256": "c1d8a0c0291dfbda24982cb2774a188fc7dbb558526f28843818d3e0108ed390"
+    },
+    "scripts/collect_context.py": {
+      "bytes": 4083,
+      "sha256": "3aa95d563c1de6bc8693e2f7b21f248c7aeceecc0a56aaf86ebd416d748a3312"
+    },
+    "scripts/inspect_changes.py": {
+      "bytes": 4109,
+      "sha256": "5215eb9758806749e789adfba4a2ebe67118667074614f9f3acbe6a6efd3b29c"
+    },
+    "scripts/install_skill.py": {
+      "bytes": 2808,
+      "sha256": "6c6964a985d1ec267d587e52973a841f0722a28058e51e55eee2f4333c6bb735"
+    },
+    "scripts/validate_package.py": {
+      "bytes": 7444,
+      "sha256": "39b20f486bba159e362789f94cf0e32fc68a5793dbe4abc07c2eb975fd35fa86"
+    },
+    "scripts/verify_archive.py": {
+      "bytes": 3559,
+      "sha256": "c643a76be198902760ed2213a35f40c223ca94357f0fdc3816e2ee4918f1d40f"
+    },
+    "templates/evidence-ledger.md": {
+      "bytes": 195,
+      "sha256": "e7200a52b6f68d1b4dec20bc3f1a0aa535d17cfcd879694ebe743a39323c774f"
+    },
+    "templates/review-summary.md": {
+      "bytes": 258,
+      "sha256": "49d398c2beb627cdec8c380e216cf8b86a625ac91c0ba04803515feff0e893e0"
+    },
+    "templates/verification-report.md": {
+      "bytes": 193,
+      "sha256": "b403f97fb682a601cb6ce4fa072db2ce846ab26c5723fcb7940c6a0c3b8cec3d"
+    }
+  },
+  "schema": 1
+}

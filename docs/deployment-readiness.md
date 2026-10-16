@@ -1,6 +1,6 @@
 # Deployment readiness
 
-The user asked to finish capability prerequisites before deployment, focus on Codex, and defer Claude. The repository remains private and licensing remains undecided. The existing catalog Site is public by explicit user confirmation. None of those choices imply that the full browser agent is deployed.
+The user asked to finish capability prerequisites before deployment, focus on Codex, and defer Claude. The repository is public and licensing remains undecided. The existing catalog Site is public by explicit user confirmation. None of those choices imply that the full browser agent is deployed.
 
 | Deployment component | Current state | Remaining requirement |
 | --- | --- | --- |

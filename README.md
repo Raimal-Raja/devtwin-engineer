@@ -174,6 +174,22 @@ Pulling an image downloads the packaged component; the full workspace still need
 
 ## Skills and plugins
 
+Install the repository-hosted **Codex plugin**:
+
+```sh
+codex plugin marketplace add Raimal-Raja/devtwin-engineer
+codex plugin add devtwin-engineer@devtwin-engineer-local
+```
+
+Or, inside **Claude Code**:
+
+```text
+/plugin marketplace add Raimal-Raja/devtwin-engineer
+/plugin install devtwin-engineer@devtwin-engineer-local
+```
+
+Restart the agent after installation. These packages contain the shared skill and its 13 workflow references; they do not bundle an agent subscription or the web execution backend. Claude runtime behavior remains unverified. See the [handover](docs/project-handover.md) for completion evidence and remaining release gates.
+
 Install the canonical skill into an existing project:
 
 ```sh
@@ -192,7 +208,7 @@ Build a fresh local plugin marketplace:
 python scripts/build_plugins.py . dist/plugin-marketplace-new
 ```
 
-Follow the [plugin setup guide](docs/plugins-and-web.md), [Codex adapter](integrations/codex/README.md), or [Claude Code adapter](integrations/claude-code/README.md) for installation and discovery. Packages are development candidates, not published marketplace listings. Codex execution and plugin discovery have been exercised; Claude package validation passed, while Claude model execution remains deferred.
+Follow the [plugin setup guide](docs/plugins-and-web.md), [Codex adapter](integrations/codex/README.md), or [Claude Code adapter](integrations/claude-code/README.md) for installation and discovery. Packages are available through this repository marketplace, not listed in an official plugin directory. Codex execution and plugin discovery have been exercised; Claude package validation passed, while Claude model execution remains deferred.
 
 ## Current evidence and boundaries
 
@@ -200,7 +216,7 @@ Follow the [plugin setup guide](docs/plugins-and-web.md), [Codex adapter](integr
 | --- | --- |
 | **Local web app** | Three views, selected-file imports, source investigations, reviewed patch export, Docker verification, and bounded repair. |
 | **13 workflows** | Prerequisite resource audit, synthetic source-analysis coverage, and batch orchestration checks. Every model finding still needs review. |
-| **Latest recorded checks** | 151 Python cases: **149 passed, 2 Windows symlink skips**. **22 web tests passed**. See [increment 35](docs/increment-35.md). |
+| **Latest recorded checks** | 152 Python cases: **150 passed, 2 Windows symlink skips**. **22 web tests passed**. See [increment 36](docs/increment-36.md). |
 | **Selection limits** | Up to 30 UTF-8 files, 16,000 total selected bytes, and a 2 MiB ZIP. Only selected files are analyzed. |
 | **Test execution** | Standard-library Python `unittest`; no automatic dependency installation or arbitrary-language runner. |
 | **Isolation** | Disposable containers with no network, bounded resources/output/time, and no host source mounts or provider credentials. The private worker controls a Docker daemon; public multi-user sandbox hardening is pending. |

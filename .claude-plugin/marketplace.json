@@ -1,0 +1,12 @@
+{
+  "name": "devtwin-engineer-local",
+  "owner": {
+    "name": "Raimal Raja"
+  },
+  "plugins": [
+    {
+      "name": "devtwin-engineer",
+      "source": "./plugins/devtwin-engineer"
+    }
+  ]
+}

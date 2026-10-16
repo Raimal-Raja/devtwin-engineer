@@ -5,11 +5,15 @@ import tempfile
 import unittest
 from scripts.build_plugins import build_plugins
 from scripts.validate_package import validate
+from scripts.check_plugin_distribution import check
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class PluginBuildTests(unittest.TestCase):
+    def test_published_marketplace_matches_canonical_package(self):
+        self.assertEqual(check(ROOT), {'passed': True, 'errors': []})
+
     def test_marketplace_and_shared_skill_integrity(self):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / 'marketplace'
