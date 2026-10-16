@@ -14,3 +14,13 @@ document.querySelectorAll('[data-runtime]').forEach(button=>button.addEventListe
 $('search').addEventListener('input',renderCatalog);$('mode').addEventListener('change',renderSetup);$('os').addEventListener('change',renderSetup);$('workflow').addEventListener('change',renderPrompt);$('generate').addEventListener('click',()=>{renderPrompt();notify('Handoff prepared for your selected runtime.');});$('copy-commands').addEventListener('click',()=>copy($('commands').textContent));$('copy-prompt').addEventListener('click',()=>copy($('prompt').textContent));
 $('export-prompt').addEventListener('click',()=>{renderPrompt();const url=URL.createObjectURL(new Blob(['# DevTwin Engineer task\n\n'+$('prompt').textContent+'\n'],{type:'text/markdown'}));const a=document.createElement('a');a.href=url;a.download='devtwin-task.md';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 renderCatalog();renderSetup();
+
+function routePage(){
+ const hash=location.hash.slice(1)||'welcome';
+ const page=['workflows','catalog','workflow-list','handoff'].includes(hash)?'workflows':hash==='explorer'?'explorer':'welcome';
+ document.querySelectorAll('[data-view]').forEach(view=>{view.hidden=view.dataset.view!==page;});
+ document.querySelectorAll('[data-page]').forEach(link=>{if(link.dataset.page===page)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
+ const anchor=document.getElementById(hash);
+ if(anchor)requestAnimationFrame(()=>anchor.scrollIntoView());else window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',routePage);routePage();
