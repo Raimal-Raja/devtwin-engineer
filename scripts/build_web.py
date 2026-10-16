@@ -46,6 +46,10 @@ def build_web(root, output):
                 raise ValueError('Missing or linked web source: ' + name)
             shutil.copyfile(source, stage / 'site' / name)
         (stage / 'site/.nojekyll').write_text('', encoding='utf-8')
+        portrait = root / 'backend/ui/portrait.jpg'
+        if portrait.is_symlink() or not portrait.is_file():
+            raise ValueError('Missing or linked creator portrait')
+        shutil.copyfile(portrait, stage / 'site/portrait.jpg')
         output.mkdir(parents=True, exist_ok=False)
         shutil.copytree(stage / 'site', output, dirs_exist_ok=True)
     return {'directory': str(output), 'plugin_files': plugins['files'],

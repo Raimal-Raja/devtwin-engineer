@@ -14,6 +14,13 @@ class WebBuildTests(unittest.TestCase):
             output = Path(folder) / 'web'
             build_web(ROOT, output)
             self.assertTrue((output / '.nojekyll').is_file())
+            self.assertEqual((output / 'portrait.jpg').read_bytes(),
+                             (ROOT / 'backend/ui/portrait.jpg').read_bytes())
+            html = (output / 'index.html').read_text(encoding='utf-8')
+            self.assertIn('Hi, I’m Raimal Raja.', html)
+            self.assertIn('data-view="welcome"', html)
+            self.assertIn('data-view="explorer"', html)
+            self.assertIn('data-view="workflows"', html)
             self.assertTrue(verify(output / 'downloads/devtwin-engineer-skill.zip')['valid'])
             with zipfile.ZipFile(output / 'downloads/devtwin-engineer-plugin.zip') as archive:
                 for name in ['.agents/plugins/marketplace.json', '.claude-plugin/marketplace.json',

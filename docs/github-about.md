@@ -37,6 +37,6 @@ The source repository and Docker images are public. Licensing and production bac
 
 The repository description, topics, descriptive README, linked use-case guide, and bundled graphics provide clear discovery signals without unrelated keywords or popularity claims. GitHub controls the repository page's HTML metadata, canonical URLs, and search-engine crawling; README HTML meta tags and a repository sitemap would not override those controls.
 
-The public Docker Hub repository is the installation homepage. A custom social-sharing card can be uploaded separately in GitHub repository Settings. The bundled overview SVG is a README illustration, not an uploaded social preview.
+The repository homepage is the GitHub Pages welcome site at https://raimal-raja.github.io/devtwin-engineer/. Docker Hub remains the container distribution channel. A custom social-sharing card can be uploaded separately in GitHub repository Settings. The bundled overview SVG is a README illustration, not an uploaded social preview.
 
 References: [GitHub repository topics](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics), [repository search](https://docs.github.com/en/search-github/searching-on-github/searching-for-repositories), and [social previews](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview).

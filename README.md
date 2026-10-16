@@ -26,6 +26,16 @@
 
 ---
 
+## Meet DevTwin on the web
+
+**[Welcome & creator](https://raimal-raja.github.io/devtwin-engineer/#welcome) · [Project Explorer guide](https://raimal-raja.github.io/devtwin-engineer/#explorer) · [13 workflows](https://raimal-raja.github.io/devtwin-engineer/#workflows) · [Plugin setup](https://raimal-raja.github.io/devtwin-engineer/#setup)**
+
+[![Live DevTwin welcome page with creator profile and plugin setup](docs/assets/site-welcome.png)](https://raimal-raja.github.io/devtwin-engineer/#welcome)
+
+The public website uses DevTwin’s warm off-white, deep green, and orange design, with shared header/footer navigation, a creator introduction, runtime setup, searchable workflows, and package downloads. Its Welcome page features Raimal Raja’s photo, biography, and public professional links.
+
+The Project Explorer page explains how to launch the independent local workspace. GitHub Pages serves static content; project imports, AI investigation, patch review, and Docker verification run in that configured backend.
+
 ## AI developer tools for codebase understanding and debugging
 
 **DevTwin Engineer is an AI developer tool for code analysis, code review, repository understanding, and Python debugging.** It helps developers investigate selected source files, review focused changes, and examine the evidence behind a repair. Connect a GitHub repository or upload a project ZIP, preview the files, and move from investigation to a reviewed patch and isolated verification.
@@ -281,6 +291,8 @@ python scripts/check_project.py .
 The combined checker runs Python tests, declared web suites, package validation, and archive checks. These are development gates, not independent effectiveness benchmarks.
 
 ## About the creator
+
+<img src="backend/ui/portrait.jpg" alt="Raimal Raja, Machine Learning Engineer and creator of DevTwin" width="140" />
 
 **Raimal Raja is a Machine Learning Engineer and the creator of DevTwin.** His work spans Python, machine learning, computer vision, LLM fine-tuning, FastAPI, and MLOps. DevTwin brings that practical AI engineering focus to developer tools: understand the source, make a focused change, and inspect the evidence behind the result.
 
