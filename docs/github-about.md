@@ -2,18 +2,18 @@
 
 ## Repository description
 
-AI code investigation and repair workspace: 13 engineering workflows, GitHub/ZIP inspection, Docker test verification, and Codex/Claude Code skills and plugins. Local web app with reviewed patches and evidence reports.
+AI code analysis and repair workspace: 13 workflows for repository understanding, debugging and code review. GitHub/ZIP imports, isolated Docker tests, and Codex/Claude Code skills and plugins.
 
-## Suggested repository topics
+## Repository topics
 
 ```text
 ai-developer-tools
+developer-tools
 code-analysis
 code-review
+repository-analysis
 debugging
 python
-developer-tools
-github
 docker
 automated-testing
 regression-testing
@@ -22,9 +22,9 @@ openrouter
 codex
 claude-code
 agent-skills
-plugins
+codex-plugin
+claude-code-plugin
 software-engineering
-repository-analysis
 ```
 
 ## Product introduction
@@ -33,6 +33,10 @@ DevTwin Engineer helps developers understand selected source files, investigate 
 
 ## Discovery expectations
 
-Descriptive headings and relevant developer terminology improve clarity and help eligible content be understood by search systems. Search ranking cannot be guaranteed. A private repository is not discoverable by the general public. README improvements do not change its visibility, licensing, or hosting status.
+The source repository and Docker images are public. Licensing and production backend deployment remain separate decisions. Search indexing can take time; ranking is not guaranteed.
 
-This file prepares metadata for review; it does not change GitHub settings. Public visibility and release remain separate decisions.
+The repository description, topics, descriptive README, linked use-case guide, and bundled graphics provide clear discovery signals without unrelated keywords or popularity claims. GitHub controls the repository page's HTML metadata, canonical URLs, and search-engine crawling; README HTML meta tags and a repository sitemap would not override those controls.
+
+The public Docker Hub repository is the installation homepage. A custom social-sharing card can be uploaded separately in GitHub repository Settings. The bundled overview SVG is a README illustration, not an uploaded social preview.
+
+References: [GitHub repository topics](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/classifying-your-repository-with-topics), [repository search](https://docs.github.com/en/search-github/searching-on-github/searching-for-repositories), and [social previews](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview).

@@ -1,6 +1,6 @@
 # Contributing
 
-This repository is private and licensing is undecided. Work only through access authorized by the owner. Keep changes focused and preserve unrelated edits.
+This repository is public and licensing is undecided. Public visibility does not grant an open-source license. Discuss substantial contributions with the maintainer before starting. Keep changes focused and preserve unrelated edits.
 
 Run `python -B scripts/check_project.py .` with the project evaluation environment and Node available. It validates package resources, thirteen-capability prerequisites, Python tests, catalog tests and archive integrity. The optional FastAPI fixture needs its isolated dependencies; report any skips. Local browser modules also need `node --check backend/ui/app.mjs`. Runtime/production evidence is separate from local unit tests.
 

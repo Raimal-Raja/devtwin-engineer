@@ -1,6 +1,6 @@
-# Private candidate completion status
+# Development candidate completion status
 
-The project includes the shared engineering skill, Codex/Claude plugin packages, the public catalog/setup dashboard and a separate internal browser investigation/patch-review workspace. The user requested a complete standalone browser agent; its local selected-file isolated execution works; its production backend remains unfinished. Codex is the current runtime priority and Claude execution is deferred by explicit user choice. The repository remains private; the existing website stays public by user confirmation. Licensing is undecided.
+The project includes the shared engineering skill, Codex/Claude plugin packages, the public catalog/setup dashboard and a separate internal browser investigation/patch-review workspace. The user requested a complete standalone browser agent; its local selected-file isolated execution works; its production backend remains unfinished. Codex is the current runtime priority and Claude execution is deferred by explicit user choice. The owner made the repository public on 2026-10-16; public app/worker Docker images are also available. The existing catalog website remains public. Licensing is undecided.
 
 | Gate | Current evidence | Status |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ The project includes the shared engineering skill, Codex/Claude plugin packages,
 | OpenRouter Free | Free Nemotron with operator-approved public/synthetic consent; all thirteen source analyses and the five-test repair loop passed | Local inference exercised; upstream may store/train on inputs; public hosting separate |
 | GitHub web connection | Commit-pinned selected-file importer and local browser controls | Public read/import tested; private access simulated, no GitHub writes |
 | Isolated verification integration | Original/candidate Docker command controls, bounded output, approval and honest blocked status | Live baseline/candidate execution and Dockerized app/worker flow passed; broader sandbox audit pending |
-| Web hosting | Platform confirmed the updated deployment after the user confirmed existing public access | Live; public website, private repository |
+| Web hosting | Platform confirmed the updated deployment after the user confirmed existing public access | Live catalog; public source repository |
 | Independent baseline comparisons/pilot | Existing fixtures are development examples, not held-out trials | Pending before effectiveness claims |
 | License/public release | User chose to keep private until decided | Pending; no public release |
 

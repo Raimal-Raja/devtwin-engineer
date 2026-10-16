@@ -2,7 +2,7 @@
 
 # DevTwin Engineer
 
-### One workspace for AI code investigation, reviewed repairs, and test evidence.
+### AI code analysis, repository investigation, and verified Python repairs.
 
 **Understand a repository. Trace the problem. Review the change. Verify the result.**
 
@@ -26,9 +26,9 @@
 
 ---
 
-## Turn an unfamiliar codebase into an inspectable plan
+## AI developer tools for codebase understanding and debugging
 
-DevTwin helps developers understand selected source files, investigate bugs, review focused changes, and examine the evidence behind a repair. Connect a GitHub repository or upload a project ZIP, preview the files, and move from investigation to a reviewed patch and isolated verification.
+**DevTwin Engineer is an AI developer tool for code analysis, code review, repository understanding, and Python debugging.** It helps developers investigate selected source files, review focused changes, and examine the evidence behind a repair. Connect a GitHub repository or upload a project ZIP, preview the files, and move from investigation to a reviewed patch and isolated verification.
 
 Use the browser workspace independently of a Codex or Claude installation, or install the shared engineering skill in your coding agent. The web workspace needs its own backend and configured model provider; isolated verification also requires Docker.
 
@@ -206,7 +206,7 @@ Follow the [plugin setup guide](docs/plugins-and-web.md), [Codex adapter](integr
 | **Isolation** | Disposable containers with no network, bounded resources/output/time, and no host source mounts or provider credentials. The private worker controls a Docker daemon; public multi-user sandbox hardening is pending. |
 | **Evidence quality** | Schema and citation bounds are validated; semantic correctness is not guaranteed. Source analysis alone runs no tests. |
 | **Hosting** | The public catalog/setup site is separate from the local execution backend. Public backend deployment remains pending. |
-| **Release** | Public Docker development images are available; the source repository remains private. License and formal release remain undecided; no open-source license is currently granted. |
+| **Release** | Public Docker development images are available; the source repository is public. License and formal release remain undecided; no open-source license is currently granted. |
 
 Selected files and workflow state are held in memory; refreshing loses the session state. Submit only inputs approved for the displayed provider policy.
 
@@ -250,7 +250,7 @@ You can pull both public images now. Running the complete workspace also require
 <details>
 <summary><strong>Is DevTwin production-ready or open source?</strong></summary>
 
-It is a development candidate with tested local flows and public Docker images. Hosted multi-user execution, broader independent evaluation, and formal release remain pending. The source repository is private and licensing remains undecided.
+It is a development candidate with tested local flows and public Docker images. Hosted multi-user execution, broader independent evaluation, and formal release remain pending. The source repository is public and licensing remains undecided.
 
 </details>
 
@@ -271,6 +271,8 @@ The combined checker runs Python tests, declared web suites, package validation,
 [GitHub](https://github.com/Raimal-Raja) · [LinkedIn](https://www.linkedin.com/in/raimal-raja-kolhi-860a032bb/) · [Portfolio](https://coder.kvtech.net)
 
 ## Documentation
+
+Start with [practical use cases](docs/use-cases.md) to choose a workflow, then follow the setup and verification guides.
 
 - [Canonical skill](SKILL.md) and [13 capability prerequisites](docs/capability-prerequisites.md)
 - [Installation](docs/installation.md) and [supported environments](docs/supported-environments.md)
